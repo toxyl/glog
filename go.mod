@@ -1,4 +1,4 @@
-module github.com/toxyl/glog
+module github.com/Toxyl/glog
 
 go 1.18
 
