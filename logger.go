@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/toxyl/gutils"
+	"github.com/Toxyl/gutils"
 )
 
 func AddrHostPort(host string, port int, useReverseDNS bool) string {
