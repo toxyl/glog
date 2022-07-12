@@ -137,6 +137,7 @@ type Logger struct {
 	debug         bool
 	hideSubsystem bool
 	hideIndicator bool
+	OnMessage     func(string)
 }
 
 func (l *Logger) write(indicator rune, format string, a ...interface{}) {
@@ -164,8 +165,12 @@ func (l *Logger) write(indicator rune, format string, a ...interface{}) {
 	case ' ':
 		prefix = Wrap("[ ]", Gray)
 	}
-
-	fmt.Printf(prefix+" "+format+"\n", a...)
+	msg := fmt.Sprintf(prefix+" "+format+"\n", a...)
+	if l.OnMessage != nil {
+		l.OnMessage(msg)
+		return
+	}
+	fmt.Print(msg)
 }
 
 func (l *Logger) prependFormat(format string) string {
@@ -240,12 +245,15 @@ func (l *Logger) ShowIndicator() *Logger {
 	return l
 }
 
-func NewLogger(id string, color uint, debug, hideSubsystem, hideIndicator bool) *Logger {
+// NewLogger creates a new logger instance. Pass `nil` as `messageHandler` if you want logs to printed to screen,
+// else provide your own handler.
+func NewLogger(id string, color uint, debug, hideSubsystem, hideIndicator bool, messageHandler func(string)) *Logger {
 	return &Logger{
 		ID:            id,
 		color:         color,
 		debug:         debug,
 		hideSubsystem: hideSubsystem,
 		hideIndicator: hideIndicator,
+		OnMessage:     messageHandler,
 	}
 }
