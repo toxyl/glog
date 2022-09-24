@@ -9,6 +9,8 @@ import (
 	"github.com/toxyl/gutils"
 )
 
+var reverseDNSResults map[string]string = map[string]string{}
+
 func AddrHostPort(host string, port int, useReverseDNS bool) string {
 	host = enrichAndColorHost(host, useReverseDNS)
 	return fmt.Sprintf("%s:%s", host, Port(port))
@@ -45,7 +47,10 @@ func enrichAndColorHost(host string, useReverseDNS bool) string {
 	}
 	revDNS := "N/A"
 	if useReverseDNS {
-		revDNS = gutils.ReverseDNS(host)
+		if _, ok := reverseDNSResults[host]; !ok {
+			reverseDNSResults[host] = gutils.ReverseDNS(host)
+		}
+		revDNS = reverseDNSResults[host]
 	}
 	hostColor := uint(88.0 + 143.0*(pt/4.0/255.0)) // 88 - 231 (143 total)
 
