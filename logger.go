@@ -17,7 +17,34 @@ var (
 	DefaultDateFormat         = "2006-01-02"
 	DefaultDateTimeFormat     = fmt.Sprintf("%s %s", DefaultDateFormat, DefaultTimeFormat)
 	DefaultDateTimeFormat12hr = fmt.Sprintf("%s %s", DefaultDateFormat, DefaultTimeFormat12hr)
+	startTime                 = time.Now()
+	showRuntime               = false
+	showDateTime              = false
 )
+
+// ShowRuntimes enables prefixing log messages with the time (in seconds) since program start.
+// This setting applies to all Logger instances.
+func ShowRuntimes() {
+	showRuntime = true
+}
+
+// HideRuntimes disables prefixing log messages with the time (in seconds) since program start.
+// This setting applies to all Logger instances.
+func HideRuntimes() {
+	showRuntime = false
+}
+
+// ShowDateTimes enables prefixing log messages with the current date and time.
+// This setting applies to all Logger instances.
+func ShowDateTimes() {
+	showDateTime = true
+}
+
+// HideDateTimes disables prefixing log messages with the current date and time.
+// This setting applies to all Logger instances.
+func HideDateTimes() {
+	showDateTime = false
+}
 
 func AddrHostPort(host string, port int, useReverseDNS bool) string {
 	host = enrichAndColorHost(host, useReverseDNS)
@@ -151,6 +178,12 @@ func DateTime12hr(t time.Time) string {
 // and colors the result green.
 func Timestamp() string {
 	return Wrap(fmt.Sprint(time.Now().Unix()), Green)
+}
+
+// Runtime determines the number of seconds passed since program start
+// and colors the result green.
+func Runtime() string {
+	return Wrap(fmt.Sprint(int(time.Since(startTime).Seconds())), Green)
 }
 
 // Percentage assumes `n` to be normalized (0..1), multiplies it with 100,
@@ -295,6 +328,13 @@ type Logger struct {
 
 func (l *Logger) write(indicator rune, format string, a ...interface{}) {
 	if l.hideIndicator {
+		if showRuntime {
+			format = fmt.Sprintf("%s | %s", Runtime(), format)
+		}
+		if showDateTime {
+			format = fmt.Sprintf("%s | %s", DateTime(time.Now()), format)
+		}
+
 		fmt.Printf(format+"\n", a...)
 		return
 	}
@@ -318,6 +358,14 @@ func (l *Logger) write(indicator rune, format string, a ...interface{}) {
 	case ' ':
 		prefix = Wrap("[ ]", Gray)
 	}
+
+	if showRuntime {
+		prefix = fmt.Sprintf("%s | %s", Runtime(), prefix)
+	}
+	if showDateTime {
+		prefix = fmt.Sprintf("%s | %s", DateTime(time.Now()), prefix)
+	}
+
 	msg := fmt.Sprintf(prefix+" "+format+"\n", a...)
 	if l.OnMessage != nil {
 		l.OnMessage(msg)
