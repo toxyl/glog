@@ -11,6 +11,14 @@ import (
 
 var reverseDNSResults map[string]string = map[string]string{}
 
+var (
+	DefaultTimeFormat         = "15:04:05"
+	DefaultTimeFormat12hr     = "03:04:05pm"
+	DefaultDateFormat         = "2006-01-02"
+	DefaultDateTimeFormat     = fmt.Sprintf("%s %s", DefaultDateFormat, DefaultTimeFormat)
+	DefaultDateTimeFormat12hr = fmt.Sprintf("%s %s", DefaultDateFormat, DefaultTimeFormat12hr)
+)
+
 func AddrHostPort(host string, port int, useReverseDNS bool) string {
 	host = enrichAndColorHost(host, useReverseDNS)
 	return fmt.Sprintf("%s:%s", host, Port(port))
@@ -94,8 +102,143 @@ func Duration(seconds uint) string {
 	return Wrap(time.Duration(seconds*uint(time.Second)).String(), Cyan)
 }
 
+func DurationMilliseconds(milliseconds uint) string {
+	return Wrap(time.Duration(milliseconds*uint(time.Millisecond)).String(), Cyan)
+}
+
+// TimeCustom formats `t` according to the given format
+// and colors the result green.
+func TimeCustom(t time.Time, format string) string {
+	return Wrap(t.Format(format), Green)
+}
+
+// Time12hr parses the time portion of `t`, formats it as AM/PM (03:04:05pm)
+// and colors the result green.
+// Overwrite `DefaultTimeFormat12hr` to use a different format.
+func Time12hr(t time.Time) string {
+	return TimeCustom(t, DefaultTimeFormat12hr)
+}
+
+// Time parses the time portion of `t`, formats it (15:04:05)
+// and colors the result green.
+// Overwrite `DefaultTimeFormat` to use a different format.
+func Time(t time.Time) string {
+	return TimeCustom(t, DefaultTimeFormat)
+}
+
+// Date parses the date portion of `t`, formats it (2006-01-02)
+// and colors the result green.
+// Overwrite `DefaultDateFormat` to use a different format.
+func Date(t time.Time) string {
+	return TimeCustom(t, DefaultDateFormat)
+}
+
+// DateTime parses `t`, formats it (2006-01-02 15:04:05)
+// and colors the result green.
+// Overwrite `DefaultDateTimeFormat` to use a different format.
+func DateTime(t time.Time) string {
+	return TimeCustom(t, DefaultDateTimeFormat)
+}
+
+// DateTime12hr parses `t`, formats it as AM/PM (2006-01-02 03:04:05pm)
+// and colors the result green.
+// Overwrite `DefaultDateTimeFormat12hr` to use a different format.
+func DateTime12hr(t time.Time) string {
+	return TimeCustom(t, DefaultDateTimeFormat12hr)
+}
+
+// Timestamp uses the current time, formats it as Unix timestamp (seconds)
+// and colors the result green.
+func Timestamp() string {
+	return Wrap(fmt.Sprint(time.Now().Unix()), Green)
+}
+
+// Percentage assumes `n` to be normalized (0..1), multiplies it with 100,
+// formats it with the given `precision` and colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
+func Percentage(n float64, precision int) string {
+	color := uint(Cyan)
+	if n < 0 {
+		color = Red
+	} else if n == 0 {
+		color = Blue
+	}
+	return Wrap(fmt.Sprintf(fmt.Sprintf("%%.%df%%%%", precision), n*100.0), color)
+}
+
+// Float64 formats `n` with the given `precision` and colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
+func Float64(n float64, precision int) string {
+	color := uint(Cyan)
+	if n < 0 {
+		color = Red
+	} else if n == 0 {
+		color = Blue
+	}
+	return Wrap(fmt.Sprintf(fmt.Sprintf("%%.%df", precision), n), color)
+}
+
+// Float32 formats `n` with the given `precision` and colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
+func Float32(n float32, precision int) string {
+	return Float64(float64(n), precision)
+}
+
+// Int colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
 func Int(n int) string {
-	return Wrap(fmt.Sprintf("%d", n), Cyan)
+	color := uint(Cyan)
+	if n < 0 {
+		color = Red
+	} else if n == 0 {
+		color = Blue
+	}
+	return Wrap(fmt.Sprintf("%d", n), color)
+}
+
+// Int8 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
+func Int8(n int8) string {
+	return Int(int(n))
+}
+
+// Int16 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
+func Int16(n int16) string {
+	return Int(int(n))
+}
+
+// Int32 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
+func Int32(n int32) string {
+	return Int(int(n))
+}
+
+// Int64 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
+func Int64(n int64) string {
+	return Int(int(n))
+}
+
+// Uint colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
+func Uint(n uint) string {
+	color := uint(Cyan)
+	if n == 0 {
+		color = Blue
+	}
+	return Wrap(fmt.Sprintf("%d", n), color)
+}
+
+// Uint8 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
+func Uint8(n uint8) string {
+	return Uint(uint(n))
+}
+
+// Uint16 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
+func Uint16(n uint16) string {
+	return Uint(uint(n))
+}
+
+// Uint32 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
+func Uint32(n uint32) string {
+	return Uint(uint(n))
+}
+
+// Uint64 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
+func Uint64(n uint64) string {
+	return Uint(uint(n))
 }
 
 // IntAmount colors `n` as int and appends either the
@@ -105,9 +248,14 @@ func IntAmount(n int, singular, plural string) string {
 	if n > 1 {
 		unit = plural
 	}
-	amount := Wrap(fmt.Sprintf("%d", n), Cyan)
+	color := uint(Cyan)
+	if n < 0 {
+		color = Red
+	} else if n == 0 {
+		color = Blue
+	}
+	amount := Wrap(fmt.Sprintf("%d", n), color)
 	if n == 0 {
-		amount = Wrap("0", Orange)
 		unit = plural
 	}
 	return fmt.Sprintf("%s %s", amount, unit)
@@ -250,7 +398,7 @@ func (l *Logger) ShowIndicator() *Logger {
 	return l
 }
 
-// NewLogger creates a new logger instance. Pass `nil` as `messageHandler` if you want logs to printed to screen,
+// NewLogger creates a new logger instance. Pass `nil` as `messageHandler` if you want logs to be printed to screen,
 // else provide your own handler.
 func NewLogger(id string, color uint, debug, hideSubsystem, hideIndicator bool, messageHandler func(string)) *Logger {
 	return &Logger{
