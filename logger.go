@@ -2,6 +2,7 @@ package glog
 
 import (
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -9,6 +10,8 @@ type Logger struct {
 	ID        string
 	color     int
 	debugMode bool
+	file      string
+	fileColor string
 	onMessage func(string)
 }
 
@@ -20,6 +23,21 @@ func (l *Logger) DisableDebug() {
 	l.debugMode = false
 }
 
+func (l *Logger) EnablePlainLog(path string) {
+	l.file = path
+}
+
+func (l *Logger) DisablePlainLog() {
+	l.file = ""
+}
+
+func (l *Logger) EnableColorLog(path string) {
+	l.fileColor = path
+}
+
+func (l *Logger) DisableColorLog() {
+	l.fileColor = ""
+}
 func (l *Logger) write(indicator rune, format string, a ...interface{}) {
 	prefix := ""
 	if LoggerConfig.ShowIndicator {
@@ -48,6 +66,33 @@ func (l *Logger) write(indicator rune, format string, a ...interface{}) {
 	if LoggerConfig.ColorsDisabled {
 		msg = StripANSI(msg)
 	}
+
+	if l.file != "" {
+		f, err := os.OpenFile(l.file, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+		if err != nil {
+			panic(err)
+		}
+
+		defer f.Close()
+
+		if _, err = f.WriteString(StripANSI(msg)); err != nil {
+			panic(err)
+		}
+	}
+
+	if l.fileColor != "" {
+		f, err := os.OpenFile(l.fileColor, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+		if err != nil {
+			panic(err)
+		}
+
+		defer f.Close()
+
+		if _, err = f.WriteString(msg); err != nil {
+			panic(err)
+		}
+	}
+
 	fmt.Print(msg)
 }
 
@@ -99,6 +144,8 @@ func NewLogger(id string, color int, debugMode bool, messageHandler func(string)
 	return &Logger{
 		ID:        id,
 		color:     color,
+		file:      "",
+		fileColor: "",
 		debugMode: debugMode,
 		onMessage: messageHandler,
 	}

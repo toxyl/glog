@@ -3,10 +3,11 @@ package glog
 import (
 	"fmt"
 	"regexp"
+	"strings"
 )
 
 var (
-	reNonANSI = regexp.MustCompile(`\033\[38;5;\d+m(.*?)\033\[0m`)
+	reNonANSI = regexp.MustCompile(`\033\[38;5;\d+m`)
 )
 
 func Wrap(str string, color int) string {
@@ -14,5 +15,7 @@ func Wrap(str string, color int) string {
 }
 
 func StripANSI(str string) string {
-	return reNonANSI.ReplaceAllString(str, "$1")
+	str = strings.ReplaceAll(str, "\033[0m", "")
+	str = reNonANSI.ReplaceAllString(str, "")
+	return str
 }

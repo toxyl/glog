@@ -1,5 +1,10 @@
 package glog
 
+import (
+	"os"
+	"strings"
+)
+
 func Password(password string) string {
 	return Wrap(password, LoggerConfig.ColorPassword)
 }
@@ -13,5 +18,20 @@ func Reason(reason string) string {
 }
 
 func File(file string) string {
-	return Wrap(file, LoggerConfig.ColorFile)
+	ops := string(os.PathSeparator)
+	res := ""
+	for i, pe := range strings.Split(file, ops) {
+		if pe == "" {
+			continue
+		}
+		if i > 0 {
+			res += Wrap(ops, LoggerConfig.ColorPathSeparator)
+		}
+		res += Wrap(pe, LoggerConfig.ColorPath)
+	}
+	if len(file) > 0 && string(file[len(file)-1]) == ops {
+		res += Wrap(ops, LoggerConfig.ColorPathSeparator)
+	}
+
+	return res
 }

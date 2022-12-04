@@ -83,6 +83,8 @@ func demoNetwork() {
 	appLogger.Default("")
 	appLogger.Info("%s", glog.HighlightInfo("NETWORK"))
 
+	networkLogger.EnablePlainLog("network-plain.log")
+	networkLogger.EnableColorLog("network-color.log")
 	networkLogger.Info(
 		"These are host:port combinations (with reverse DNS): %s, %s, %s",
 		glog.AddrIPv4Port("8.8.8.8", 80, true),
@@ -122,6 +124,21 @@ func demoNetwork() {
 		"These are IPs (without reverse DNS): %s",
 		glog.IPs([]string{"127.0.0.1", "8.8.8.8", "160.20.152.105", "255.255.255.255"}, false),
 	)
+	networkLogger.Info(
+		"These are URLs: %s, %s, %s",
+		glog.URL("https://www.google.com"),
+		glog.URL("https://serverius.net"),
+		glog.URL("http://some.unsafe.place-to-not-go.to"),
+	)
+	networkLogger.Info(
+		"These are more URLs: %s, %s, %s, %s",
+		glog.URL("https://colab.research.google.com/github/huggingface/notebooks/blob/main/diffusers/stable_diffusion.ipynb#scrollTo=yEErJFjlrSWS"),
+		glog.URL("https://goteleport.com/docs/deploy-a-cluster/open-source/"),
+		glog.URL("https://sam-koblenski.blogspot.com/2015/09/everyday-dsp-for-programmers-averaging.html"),
+		glog.URL("https://random_user:random_password@random.domain/hello/world/?me=random_user&you=someone%%20else#here"),
+	)
+	networkLogger.DisablePlainLog()
+	networkLogger.DisableColorLog()
 }
 
 func demoMisc() {
@@ -165,6 +182,7 @@ func demoDateTime() {
 	appLogger.Default("")
 	appLogger.Info("%s", glog.HighlightInfo("DATE & TIME"))
 
+	timeLogger.EnablePlainLog("time-plain.log")
 	timeLogger.Info(
 		"The operation took: %s, %s, %s, %s",
 		glog.Duration(15),
@@ -204,6 +222,7 @@ func demoDateTime() {
 		"Today's full date (24hr): %s",
 		glog.DateTime(time.Now()),
 	)
+	timeLogger.DisablePlainLog()
 }
 
 func main() {
