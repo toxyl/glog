@@ -3,6 +3,7 @@ package glog
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -68,6 +69,11 @@ func (l *Logger) write(indicator rune, format string, a ...interface{}) {
 	}
 
 	if l.file != "" {
+		err := os.MkdirAll(filepath.Dir(l.file), 0770) // create target dir if it doesn't exist
+		if err != nil {
+			panic(err)
+		}
+
 		f, err := os.OpenFile(l.file, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 		if err != nil {
 			panic(err)
@@ -81,6 +87,11 @@ func (l *Logger) write(indicator rune, format string, a ...interface{}) {
 	}
 
 	if l.fileColor != "" {
+		err := os.MkdirAll(filepath.Dir(l.fileColor), 0770) // create target dir if it doesn't exist
+		if err != nil {
+			panic(err)
+		}
+
 		f, err := os.OpenFile(l.fileColor, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
 		if err != nil {
 			panic(err)
