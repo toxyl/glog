@@ -149,6 +149,10 @@ func (l *Logger) Debug(format string, a ...interface{}) {
 	l.write('d', l.prependFormat(format), a...)
 }
 
+func (l *Logger) Question(format string, a ...interface{}) {
+	l.write('?', l.prependFormat(format), a...)
+}
+
 // NewLogger creates a new logger instance. Pass `nil` as `messageHandler` if you want logs to be printed to screen,
 // else provide your own handler.
 func NewLogger(id string, color int, debugMode bool, messageHandler func(string)) *Logger {

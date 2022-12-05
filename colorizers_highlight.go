@@ -55,3 +55,7 @@ func HighlightWarning(message string) string {
 func HighlightDebug(message string) string {
 	return LoggerConfig.Indicators['d'].Wrap(message)
 }
+
+func HighlightQuestion(message string) string {
+	return LoggerConfig.Indicators['?'].Wrap(message)
+}

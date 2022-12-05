@@ -39,6 +39,7 @@ func demoMessageTypes() {
 	appLogger.Default("%s", glog.Highlight("Highlighted text is cached, so the color does not have"))
 	appLogger.Default("%s", glog.Highlight("to be recalculated every time."))
 	appLogger.Default("")
+	appLogger.Default("")
 
 	appLogger.Info("%s", glog.HighlightInfo("MESSAGE TYPES"))
 
@@ -53,6 +54,7 @@ func demoMessageTypes() {
 	messageTypesLogger.EnableDebug()
 	messageTypesLogger.Debug("The last debug message you didn't see, but this %s you will see.", glog.HighlightDebug("debug message"))
 	messageTypesLogger.DisableDebug()
+	messageTypesLogger.Question("Do you have %s? Maybe the next sections will answer them.", glog.HighlightQuestion("a question"))
 }
 
 func demoDataTypes() {
