@@ -59,3 +59,7 @@ func HighlightDebug(message string) string {
 func HighlightQuestion(message string) string {
 	return LoggerConfig.Indicators['?'].Wrap(message)
 }
+
+func HighlightTrace(message string) string {
+	return LoggerConfig.Indicators['t'].Wrap(message)
+}

@@ -44,6 +44,7 @@ type Config struct {
 	ColorIndicatorError,
 	ColorIndicatorWarning,
 	ColorIndicatorDebug,
+	ColorIndicatorTrace,
 	ColorIndicatorQuestion int
 	ColorsDisabled,
 	ShowRuntimeSeconds,
@@ -103,6 +104,7 @@ func NewDefaultConfig() *Config {
 		ColorIndicatorError:     Red,
 		ColorIndicatorWarning:   Yellow,
 		ColorIndicatorDebug:     Orange,
+		ColorIndicatorTrace:     Orange,
 		ColorIndicatorQuestion:  Lime,
 		ColorsDisabled:          false,
 		ShowRuntimeSeconds:      false,
@@ -124,6 +126,7 @@ func NewDefaultConfig() *Config {
 	c.AddIndicator('x', "[x]", c.ColorIndicatorError)
 	c.AddIndicator('d', "[D]", c.ColorIndicatorDebug)
 	c.AddIndicator('?', "[?]", c.ColorIndicatorQuestion)
+	c.AddIndicator('t', "[T]", c.ColorIndicatorTrace)
 
 	return c
 }

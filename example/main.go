@@ -23,24 +23,31 @@ var miscLogger *glog.Logger = glog.NewLogger("Misc", glog.Lime, false, func(msg 
 	fmt.Print("Without colors: " + glog.StripANSI(msg)) // and again, but without colors
 })
 
+func fnD() {
+	appLogger.Trace(4)
+}
+
+func fnC() {
+	appLogger.Trace(3)
+	fnD()
+}
+
+func fnB() {
+	appLogger.Trace(2)
+	fnC()
+}
+
+func fnA() {
+	appLogger.Trace(1)
+	fnB()
+}
+
 func sleep() {
 	appLogger.Default("Sleeping a bit...")
 	gutils.RandomSleep(100, 3000, time.Millisecond)
 }
 
 func demoMessageTypes() {
-	appLogger.Default("")
-	appLogger.Default("%s", glog.Highlight("This is a color highlighted text"))
-	appLogger.Default("%s", glog.Highlight("This is another color highlighted text"))
-	appLogger.Default("%s", glog.Highlight("Color is determined by each character,"))
-	appLogger.Default("%s", glog.Highlight("i.e. identical strings produce identical colors."))
-	appLogger.Default("%s", glog.Highlight("The algorithm is case-insensitive and only processes"))
-	appLogger.Default("%s", glog.Highlight("the most common characters, others are moved into range."))
-	appLogger.Default("%s", glog.Highlight("Highlighted text is cached, so the color does not have"))
-	appLogger.Default("%s", glog.Highlight("to be recalculated every time."))
-	appLogger.Default("")
-	appLogger.Default("")
-
 	appLogger.Info("%s", glog.HighlightInfo("MESSAGE TYPES"))
 
 	messageTypesLogger.Info("This is %s message", glog.HighlightInfo("an info"))
@@ -178,6 +185,24 @@ func demoMisc() {
 		glog.File("/etc/profile"),
 		glog.File("/etc/resolv.conf"),
 	)
+
+	appLogger.Default("")
+	appLogger.Info("%s", glog.HighlightInfo("STRING HIGHLIGHTING WITH AUTOMATIC COLORING"))
+	appLogger.Default("%s", glog.Highlight("This is a color highlighted text"))
+	appLogger.Default("%s", glog.Highlight("This is another color highlighted text"))
+	appLogger.Default("%s", glog.Highlight("Color is determined by each character,"))
+	appLogger.Default("%s", glog.Highlight("i.e. identical strings produce identical colors."))
+	appLogger.Default("%s", glog.Highlight("The algorithm is case-insensitive and only processes"))
+	appLogger.Default("%s", glog.Highlight("the most common characters, others are truncated to the range."))
+	appLogger.Default("%s", glog.Highlight("Highlighted text is cached, so the color does not have"))
+	appLogger.Default("%s", glog.Highlight("to be recalculated every time."))
+	appLogger.Default("")
+	appLogger.Info("%s", glog.HighlightInfo("TRACING FUNCTION CALLS"))
+	appLogger.EnableTrace(3)
+	fnA()
+	appLogger.DisableTrace()
+	appLogger.Default("")
+
 }
 
 func demoDateTime() {
