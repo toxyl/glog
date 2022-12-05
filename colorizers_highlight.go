@@ -1,6 +1,30 @@
 package glog
 
+import (
+	"math"
+	"strings"
+
+	"github.com/toxyl/gutils"
+)
+
+var stringColorCache map[string]int = map[string]int{}
+
+func getStringColor(str string) int {
+	if v, ok := stringColorCache[str]; ok {
+		return v
+	}
+	pt := 0.0
+	bm := []rune(gutils.RemoveNonPrintable(strings.ToUpper(str)))
+	l := len(bm)
+	for i := 0; i < l; i++ {
+		pt += (math.Max(0.0, math.Min(96.0, float64(bm[i])-33.0)) / 96.0) / float64(l)
+	}
+	stringColorCache[str] = int(88.0 + 143.0*pt) // 88 - 231 (143 total)
+	return stringColorCache[str]
+}
+
 func Highlight(message string) string {
+	message = Wrap(message, getStringColor(message))
 	return LoggerConfig.Indicators[' '].Wrap(message)
 }
 

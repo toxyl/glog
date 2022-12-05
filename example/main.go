@@ -30,6 +30,16 @@ func sleep() {
 
 func demoMessageTypes() {
 	appLogger.Default("")
+	appLogger.Default("%s", glog.Highlight("This is a color highlighted text"))
+	appLogger.Default("%s", glog.Highlight("This is another color highlighted text"))
+	appLogger.Default("%s", glog.Highlight("Color is determined by each character,"))
+	appLogger.Default("%s", glog.Highlight("i.e. identical strings produce identical colors."))
+	appLogger.Default("%s", glog.Highlight("The algorithm is case-insensitive and only processes"))
+	appLogger.Default("%s", glog.Highlight("the most common characters, others are moved into range."))
+	appLogger.Default("%s", glog.Highlight("Highlighted text is cached, so the color does not have"))
+	appLogger.Default("%s", glog.Highlight("to be recalculated every time."))
+	appLogger.Default("")
+
 	appLogger.Info("%s", glog.HighlightInfo("MESSAGE TYPES"))
 
 	messageTypesLogger.Info("This is %s message", glog.HighlightInfo("an info"))
