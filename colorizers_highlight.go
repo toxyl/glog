@@ -24,8 +24,7 @@ func getStringColor(str string) int {
 }
 
 func Highlight(message string) string {
-	message = Wrap(message, getStringColor(message))
-	return LoggerConfig.Indicators[' '].Wrap(message)
+	return Wrap(message, getStringColor(message))
 }
 
 func HighlightInfo(message string) string {
