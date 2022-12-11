@@ -93,6 +93,9 @@ func demoDataTypes() {
 		glog.Percentage(0.0, 1),
 		glog.Percentage(0.2332, 3),
 	)
+
+	appLogger.Info("You can also let glog choose a colorizer based on type: %s", glog.Auto(true, false, 1, -4, 0, 1.23, -73.64, -0.34321, 0.698765, time.Now(), 5*time.Second, "hello", "world"))
+	appLogger.Info("Normalized float values (from %s to %s) will be shown as percentages (%s).", glog.Float64(-1.0, 1), glog.Float64(1.0, 1), glog.Auto(-1.0, 1.0))
 }
 
 func demoNetwork() {
