@@ -141,17 +141,17 @@ func demoNetwork() {
 		glog.IPs([]string{"127.0.0.1", "8.8.8.8", "160.20.152.105", "255.255.255.255"}, false),
 	)
 	networkLogger.Info(
-		"These are URLs: %s, %s, %s",
-		glog.URL("https://www.google.com"),
-		glog.URL("https://serverius.net"),
-		glog.URL("http://some.unsafe.place-to-not-go.to"),
+		"These are URLs: %s",
+		glog.URL("https://www.google.com", "https://serverius.net", "http://some.unsafe.place-to-not-go.to"),
 	)
 	networkLogger.Info(
-		"These are more URLs: %s, %s, %s, %s",
-		glog.URL("https://colab.research.google.com/github/huggingface/notebooks/blob/main/diffusers/stable_diffusion.ipynb#scrollTo=yEErJFjlrSWS"),
-		glog.URL("https://goteleport.com/docs/deploy-a-cluster/open-source/"),
-		glog.URL("https://sam-koblenski.blogspot.com/2015/09/everyday-dsp-for-programmers-averaging.html"),
-		glog.URL("https://random_user:random_password@random.domain/hello/world/?me=random_user&you=someone%%20else#here"),
+		"These are more URLs: %s",
+		glog.URL(
+			"https://colab.research.google.com/github/huggingface/notebooks/blob/main/diffusers/stable_diffusion.ipynb#scrollTo=yEErJFjlrSWS",
+			"https://goteleport.com/docs/deploy-a-cluster/open-source/",
+			"https://sam-koblenski.blogspot.com/2015/09/everyday-dsp-for-programmers-averaging.html",
+			"https://random_user:random_password@random.domain/hello/world/?me=random_user&you=someone%%20else#here",
+		),
 	)
 	networkLogger.DisablePlainLog()
 	networkLogger.DisableColorLog()

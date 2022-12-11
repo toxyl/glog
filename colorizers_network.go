@@ -73,72 +73,76 @@ func IPs(ips []string, useReverseDNS bool) string {
 	return strings.Join(hs, ", ")
 }
 
-func URL(raw string) string {
-	isAlive := true
-	u, err := url.Parse(raw)
-	if err != nil {
-		return raw
-	}
+func URL(raw ...string) string {
+	out := []string{}
+	for _, r := range raw {
+		isAlive := true
+		u, err := url.Parse(r)
+		if err != nil {
+			return r
+		}
 
-	res := ""
-	res += Wrap(u.Scheme+Wrap("://", LoggerConfig.ColorURLSeparators), LoggerConfig.ColorScheme)
-	if u.User != nil && u.User.Username() != "" {
-		res += Wrap(u.User.Username(), LoggerConfig.ColorUser)
-		if p, ok := u.User.Password(); ok {
-			res += Wrap(":", LoggerConfig.ColorURLSeparators) + Wrap(p, LoggerConfig.ColorPassword)
+		res := ""
+		res += Wrap(u.Scheme+Wrap("://", LoggerConfig.ColorURLSeparators), LoggerConfig.ColorScheme)
+		if u.User != nil && u.User.Username() != "" {
+			res += Wrap(u.User.Username(), LoggerConfig.ColorUser)
+			if p, ok := u.User.Password(); ok {
+				res += Wrap(":", LoggerConfig.ColorURLSeparators) + Wrap(p, LoggerConfig.ColorPassword)
+			}
+			res += Wrap("@", LoggerConfig.ColorURLSeparators)
 		}
-		res += Wrap("@", LoggerConfig.ColorURLSeparators)
-	}
-	ips, _ := net.LookupIP(u.Host)
-	if len(ips) > 0 {
-		res += Wrap(u.Host, getIPColor(ips[0].String()))
-	} else {
-		isAlive = false
-		res += WrapRed(u.Host)
-	}
-	for i, pe := range strings.Split(u.Path, "/") {
-		if pe == "" {
-			continue
+		ips, _ := net.LookupIP(u.Host)
+		if len(ips) > 0 {
+			res += Wrap(u.Host, getIPColor(ips[0].String()))
+		} else {
+			isAlive = false
+			res += WrapRed(u.Host)
 		}
-		if i > 0 {
+		for i, pe := range strings.Split(u.Path, "/") {
+			if pe == "" {
+				continue
+			}
+			if i > 0 {
+				res += Wrap("/", LoggerConfig.ColorURLSeparators)
+			}
+			res += Wrap(pe, LoggerConfig.ColorURLPath)
+		}
+		if len(u.Path) > 0 && string(u.Path[len(u.Path)-1]) == "/" {
 			res += Wrap("/", LoggerConfig.ColorURLSeparators)
 		}
-		res += Wrap(pe, LoggerConfig.ColorURLPath)
-	}
-	if len(u.Path) > 0 && string(u.Path[len(u.Path)-1]) == "/" {
-		res += Wrap("/", LoggerConfig.ColorURLSeparators)
-	}
 
-	q := u.RawQuery
-	if q != "" {
-		res += Wrap("?", LoggerConfig.ColorURLSeparators)
-		pairs := []string{}
-		for _, pair := range strings.Split(q, "&") {
-			if pair == "" {
-				continue // empty pairs don't work
+		q := u.RawQuery
+		if q != "" {
+			res += Wrap("?", LoggerConfig.ColorURLSeparators)
+			pairs := []string{}
+			for _, pair := range strings.Split(q, "&") {
+				if pair == "" {
+					continue // empty pairs don't work
+				}
+				e := strings.Split(pair, "=")
+				if len(e) == 1 {
+					// we have a single key
+					pairs = append(pairs, Wrap(e[0], LoggerConfig.ColorQueryKey))
+				} else {
+					// we have a key-value pair
+					v := strings.Join(e[1:], "=")
+					pairs = append(pairs,
+						Wrap(e[0], LoggerConfig.ColorQueryKey)+
+							Wrap("=", LoggerConfig.ColorURLSeparators)+
+							Wrap(v, LoggerConfig.ColorQueryValue),
+					)
+				}
 			}
-			e := strings.Split(pair, "=")
-			if len(e) == 1 {
-				// we have a single key
-				pairs = append(pairs, Wrap(e[0], LoggerConfig.ColorQueryKey))
-			} else {
-				// we have a key-value pair
-				v := strings.Join(e[1:], "=")
-				pairs = append(pairs,
-					Wrap(e[0], LoggerConfig.ColorQueryKey)+
-						Wrap("=", LoggerConfig.ColorURLSeparators)+
-						Wrap(v, LoggerConfig.ColorQueryValue),
-				)
-			}
+			res += strings.Join(pairs, Wrap("&", LoggerConfig.ColorURLSeparators))
 		}
-		res += strings.Join(pairs, Wrap("&", LoggerConfig.ColorURLSeparators))
-	}
 
-	if u.Fragment != "" {
-		res += Wrap("#", LoggerConfig.ColorURLSeparators) + Wrap(u.Fragment, LoggerConfig.ColorFragment)
+		if u.Fragment != "" {
+			res += Wrap("#", LoggerConfig.ColorURLSeparators) + Wrap(u.Fragment, LoggerConfig.ColorFragment)
+		}
+		if !isAlive {
+			res = WrapRed("(dead domain: ") + res + WrapRed(")")
+		}
+		out = append(out, res)
 	}
-	if !isAlive {
-		res = WrapRed("(dead domain: ") + res + WrapRed(")")
-	}
-	return res
+	return strings.Join(out, ", ")
 }
