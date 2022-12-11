@@ -68,19 +68,16 @@ func demoDataTypes() {
 	appLogger.Default("")
 	appLogger.Info("%s", glog.HighlightInfo("DATA TYPES"))
 
-	boolLogger.Info("These are booleans: %s, %s", glog.Bool(true), glog.Bool(false))
+	boolLogger.Info("These are booleans: %s", glog.Bool(true, false))
 
 	intLogger.Info(
-		"This is a negative integer (%s), a zero-value integer (%s) and a positive integer (%s)",
-		glog.Int(-23),
-		glog.Int(0),
-		glog.Int(32),
+		"This is a negative integer, a zero-value integer and a positive integer: %s",
+		glog.Int(-23, 0, 32),
 	)
 
 	uintLogger.Info(
-		"This is a a zero-value unsigned integer (%s) and a positive unsigned integer (%s)",
-		glog.Uint(0),
-		glog.Uint(32),
+		"This is a a zero-value unsigned integer and a positive unsigned integer: %s",
+		glog.Uint(0, 32),
 	)
 
 	floatLogger.Info(
@@ -188,8 +185,8 @@ func demoMisc() {
 
 	appLogger.Default("")
 	appLogger.Info("%s", glog.HighlightInfo("STRING HIGHLIGHTING WITH AUTOMATIC COLORING"))
-	appLogger.Default("%s", glog.Highlight("This is a color highlighted text"))
-	appLogger.Default("%s", glog.Highlight("This is another color highlighted text"))
+	appLogger.Default("%s", glog.Highlight("This is a color highlighted text", "red", "green", "blue"))
+	appLogger.Default("%s", glog.Highlight("This is another color highlighted text", "red", "green", "blue"))
 	appLogger.Default("%s", glog.Highlight("Color is determined by each character,"))
 	appLogger.Default("%s", glog.Highlight("i.e. identical strings produce identical colors."))
 	appLogger.Default("%s", glog.Highlight("The algorithm is case-insensitive and only processes"))

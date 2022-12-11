@@ -23,8 +23,12 @@ func getStringColor(str string) int {
 	return stringColorCache[str]
 }
 
-func Highlight(message string) string {
-	return Wrap(message, getStringColor(message))
+func Highlight(message ...string) string {
+	res := []string{}
+	for _, msg := range message {
+		res = append(res, Wrap(msg, getStringColor(msg)))
+	}
+	return strings.Join(res, ", ")
 }
 
 func HighlightInfo(message string) string {

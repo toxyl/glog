@@ -2,6 +2,7 @@ package glog
 
 import (
 	"fmt"
+	"strings"
 )
 
 // IntAmount colors `n` as int and appends either the
@@ -25,32 +26,52 @@ func IntAmount(n int, singular, plural string) string {
 }
 
 // Int colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
-func Int(n int) string {
-	color := LoggerConfig.ColorIntPositive
-	if n < 0 {
-		color = LoggerConfig.ColorIntNegative
-	} else if n == 0 {
-		color = LoggerConfig.ColorIntZero
+func Int(n ...int) string {
+	res := []string{}
+	for _, num := range n {
+		color := LoggerConfig.ColorIntPositive
+		if num < 0 {
+			color = LoggerConfig.ColorIntNegative
+		} else if num == 0 {
+			color = LoggerConfig.ColorIntZero
+		}
+		res = append(res, Wrap(fmt.Sprintf("%d", num), color))
 	}
-	return Wrap(fmt.Sprintf("%d", n), color)
+	return strings.Join(res, ", ")
 }
 
 // Int8 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
-func Int8(n int8) string {
-	return Int(int(n))
+func Int8(n ...int8) string {
+	ints := []int{}
+	for _, num := range n {
+		ints = append(ints, int(num))
+	}
+	return Int(ints...)
 }
 
 // Int16 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
-func Int16(n int16) string {
-	return Int(int(n))
+func Int16(n ...int16) string {
+	ints := []int{}
+	for _, num := range n {
+		ints = append(ints, int(num))
+	}
+	return Int(ints...)
 }
 
 // Int32 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
-func Int32(n int32) string {
-	return Int(int(n))
+func Int32(n ...int32) string {
+	ints := []int{}
+	for _, num := range n {
+		ints = append(ints, int(num))
+	}
+	return Int(ints...)
 }
 
 // Int64 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
-func Int64(n int64) string {
-	return Int(int(n))
+func Int64(n ...int64) string {
+	ints := []int{}
+	for _, num := range n {
+		ints = append(ints, int(num))
+	}
+	return Int(ints...)
 }
