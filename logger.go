@@ -165,6 +165,7 @@ func (l *Logger) Debug(format string, a ...interface{}) {
 func (l *Logger) Question(format string, a ...interface{}) {
 	l.write('?', l.prependFormat(format), a...)
 }
+
 func (l *Logger) Trace(level uint) {
 	// debugging function to spit out current file, line number and function name
 	// see https://stackoverflow.com/a/46289376/55504
@@ -200,6 +201,30 @@ func (l *Logger) Trace(level uint) {
 		File(frameCaller2.File),
 		Int(frameCaller2.Line),
 	)
+}
+
+func (l *Logger) ShowColors() {
+	str := ""
+	for i := 0; i < 8; i++ {
+		str += Wrap(fmt.Sprintf("%03d ", i), i)
+	}
+	l.Info("%s", str)
+
+	str = ""
+	for i := 8; i < 16; i++ {
+		str += Wrap(fmt.Sprintf("%03d ", i), i)
+	}
+	l.Info("%s", str)
+
+	for i := 16; i < 256; i++ {
+		str := ""
+		for j := 0; j < 6 && i < 256; j++ {
+			str += Wrap(fmt.Sprintf("%03d ", i), i)
+			i++
+		}
+		i--
+		l.Info("%s", str)
+	}
 }
 
 // NewLogger creates a new logger instance. Pass `nil` as `messageHandler` if you want logs to be printed to screen,

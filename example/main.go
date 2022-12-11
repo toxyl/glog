@@ -202,11 +202,9 @@ func demoMisc() {
 	fnA()
 	appLogger.DisableTrace()
 	appLogger.Default("")
-
 }
 
 func demoDateTime() {
-
 	// Hint: You can change the default time and date formats using these variables:
 	//
 	// glog.TimeFormat     = "15:04:05"
@@ -262,6 +260,11 @@ func demoDateTime() {
 	timeLogger.DisablePlainLog()
 }
 
+func demoColors() {
+	appLogger.ID = "Colors"
+	appLogger.ShowColors()
+}
+
 func main() {
 	appLogger.Success("App booted, let's show you the demo then!")
 
@@ -278,6 +281,9 @@ func main() {
 	sleep()
 
 	demoMisc()
+	sleep()
+
+	demoColors()
 	sleep()
 
 	appLogger.Default(
