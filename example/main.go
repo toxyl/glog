@@ -196,6 +196,13 @@ func demoMisc() {
 	appLogger.Default("%s", glog.Highlight("the most common characters, others are truncated to the range."))
 	appLogger.Default("%s", glog.Highlight("Highlighted text is cached, so the color does not have"))
 	appLogger.Default("%s", glog.Highlight("to be recalculated every time."))
+
+	appLogger.Default("")
+	appLogger.Info("%s", glog.HighlightInfo("ANSI-AWARE VALUE PADDING"))
+	appLogger.Default("Left:   %s", glog.PadLeft(glog.Auto(1.52, "hello", 10000, -0.1), 50, '-'))
+	appLogger.Default("Right:  %s", glog.PadRight(glog.Auto(1.52, "hello", 10000, -0.1), 50, '+'))
+	appLogger.Default("Center: %s", glog.PadCenter(glog.Auto(1.52, "hello", 10000, -0.1), 50, '='))
+
 	appLogger.Default("")
 	appLogger.Info("%s", glog.HighlightInfo("TRACING FUNCTION CALLS"))
 	appLogger.EnableTrace(3)
