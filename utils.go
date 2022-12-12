@@ -2,6 +2,7 @@ package glog
 
 import (
 	"fmt"
+	"math"
 	"regexp"
 	"strings"
 )
@@ -24,9 +25,9 @@ func getPadLength(str string, maxLength int, char rune) int {
 	l1 := len(str)
 	l2 := len(StripANSI(str))
 	if l1 == l2 {
-		return maxLength - l1 // plain text
+		return int(math.Max(0.0, float64(maxLength-l1))) // plain text
 	}
-	return maxLength - l2 // string with ANSI escapes
+	return int(math.Max(0.0, float64(maxLength-l2))) // string with ANSI escapes
 
 }
 
