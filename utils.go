@@ -52,3 +52,31 @@ func PadCenter(str string, maxLength int, char rune) string {
 	pr = padLen - pl
 	return strings.Repeat(string(char), pl) + str + strings.Repeat(string(char), pr)
 }
+
+type Ints interface {
+	int64 | int32 | int16 | int8 | int
+}
+
+type Uints interface {
+	uint64 | uint32 | uint16 | uint8 | uint
+}
+
+type Floats interface {
+	float32 | float64
+}
+
+type Number interface {
+	Ints | Uints | Floats
+}
+
+type NumberOrInterface interface {
+	Number | interface{}
+}
+
+func Max[N Number](a, b N) N {
+	return N(math.Max(float64(a), float64(b)))
+}
+
+func Min[N Number](a, b N) N {
+	return N(math.Min(float64(a), float64(b)))
+}

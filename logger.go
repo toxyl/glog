@@ -172,35 +172,33 @@ func (l *Logger) Trace(level uint) {
 	if !l.traceMode || level > l.traceLevel {
 		return
 	}
-	pcCaller1 := make([]uintptr, 15)
-	nCaller1 := runtime.Callers(2, pcCaller1)
-	framesCaller1 := runtime.CallersFrames(pcCaller1[:nCaller1])
-	frameCaller1, _ := framesCaller1.Next()
-	fullPathFuncCaller1 := strings.Split(frameCaller1.Function, "/")
+	depth := 2
+	maxDepth := 22
+	pcCaller1 := make([]uintptr, maxDepth+depth)
+	nCaller1 := runtime.Callers(int(depth), pcCaller1)
+	ml := int(Min(len(pcCaller1), Min(nCaller1, int(maxDepth))))
 
-	pcCaller2 := make([]uintptr, 15)
-	nCaller2 := runtime.Callers(3, pcCaller2)
-	framesCaller2 := runtime.CallersFrames(pcCaller2[:nCaller2])
-	frameCaller2, _ := framesCaller2.Next()
-	fullPathFuncCaller2 := strings.Split(frameCaller2.Function, "/")
+	maxFuncLen, maxPathLen, maxLineLen := 0, 0, 0
+	lines := []*TraceLine{}
 
-	l.write('t', l.prependFormat("%s %s (%s:%s)"),
-		Wrap(
-			fmt.Sprintf(
-				"[TRACE-%03d] %s",
-				level,
-				strings.Repeat("-", int(level)),
-			), LoggerConfig.ColorIndicatorDebug+int(level)),
-		Wrap(fullPathFuncCaller1[len(fullPathFuncCaller1)-1], Orange),
-		File(frameCaller1.File),
-		Int(frameCaller1.Line),
-	)
-	l.write('t', l.prependFormat("%s from %s (%s:%s)"),
-		Wrap(fmt.Sprintf("            %s", strings.Repeat(" ", int(level))), LoggerConfig.ColorIndicatorDebug+int(level)),
-		Wrap(fullPathFuncCaller2[len(fullPathFuncCaller2)-1], Orange+1),
-		File(frameCaller2.File),
-		Int(frameCaller2.Line),
-	)
+	for i := int(depth); i < ml; i++ {
+		frames := runtime.CallersFrames(pcCaller1[i-2 : i-1])
+		frameCaller, _ := frames.Next()
+		fullPathFuncCaller := strings.Split(frameCaller.Function, "/")
+		fnName := fullPathFuncCaller[len(fullPathFuncCaller)-1]
+		fnFile := frameCaller.File
+		fnLine := frameCaller.Line
+
+		lines = append(lines, NewTraceLine(l, i, int(depth), ml, fnName, fnFile, fnLine))
+
+		maxFuncLen = Max(maxFuncLen, len(fnName))
+		maxPathLen = Max(maxPathLen, len(fnFile))
+		maxLineLen = Max(maxLineLen, len(fmt.Sprint(fnLine)))
+	}
+
+	for i, tl := range lines {
+		tl.Print(i, len(lines), int(level), maxFuncLen, maxPathLen, maxLineLen)
+	}
 }
 
 func (l *Logger) ShowColors() {

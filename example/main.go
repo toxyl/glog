@@ -23,8 +23,13 @@ var miscLogger *glog.Logger = glog.NewLogger("Misc", glog.Lime, false, func(msg 
 	fmt.Print("Without colors: " + glog.StripANSI(msg)) // and again, but without colors
 })
 
+func fnE() {
+	appLogger.Trace(1)
+}
+
 func fnD() {
 	appLogger.Trace(4)
+	fnE()
 }
 
 func fnC() {
