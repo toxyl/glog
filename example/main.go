@@ -10,6 +10,7 @@ import (
 )
 
 var appLogger *glog.Logger = glog.NewLogger("", glog.Pink, false, nil)
+var traceLogger *glog.Logger = glog.NewLogger("Trace", glog.BrightYellow, false, nil)
 var messageTypesLogger *glog.Logger = glog.NewLogger("Message Type", glog.OliveGreen, false, nil)
 var boolLogger *glog.Logger = glog.NewLogger("Bool", glog.Cyan, false, nil)
 var intLogger *glog.Logger = glog.NewLogger("Int", glog.LightBlue, false, nil)
@@ -24,26 +25,26 @@ var miscLogger *glog.Logger = glog.NewLogger("Misc", glog.Lime, false, func(msg 
 })
 
 func fnE() {
-	appLogger.Trace(1)
+	traceLogger.Trace(1)
 }
 
 func fnD() {
-	appLogger.Trace(4)
+	traceLogger.Trace(4)
 	fnE()
 }
 
 func fnC() {
-	appLogger.Trace(3)
+	traceLogger.Trace(3)
 	fnD()
 }
 
 func fnB() {
-	appLogger.Trace(2)
+	traceLogger.Trace(2)
 	fnC()
 }
 
 func fnA() {
-	appLogger.Trace(1)
+	traceLogger.Trace(1)
 	fnB()
 }
 
@@ -210,9 +211,9 @@ func demoMisc() {
 
 	appLogger.Default("")
 	appLogger.Info("%s", glog.HighlightInfo("TRACING FUNCTION CALLS"))
-	appLogger.EnableTrace(3)
+	traceLogger.EnableTrace(3)
 	fnA()
-	appLogger.DisableTrace()
+	traceLogger.DisableTrace()
 	appLogger.Default("")
 }
 
