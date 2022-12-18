@@ -13,10 +13,10 @@ func getStringColor(str string) int {
 		return v
 	}
 	pt := 0.0
-	bm := []rune(gutils.RemoveNonPrintable(strings.ToUpper(str)))
+	bm := []rune(gutils.RemoveNonPrintable(str))
 	l := len(bm)
 	for i := 0; i < l; i++ {
-		pt += (Max(0.0, Min(96.0, float64(bm[i])-33.0)) / 96.0) / float64(l)
+		pt += (Max(0.0, Min(94.0, float64(bm[i])-32.0)) / 94.0) / float64(l)
 	}
 	stringColorCache[str] = int(16.0 + 215.0*pt) // 16 - 231 (215 total)
 	return stringColorCache[str]
