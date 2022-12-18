@@ -16,9 +16,6 @@ type TraceLine struct {
 }
 
 func (tl *TraceLine) Print(i, l, level, maxLenFunction, maxLenPath, maxLenLine int) {
-	// if tl.Index == tl.Depth {
-	// maxLenFunction += tl.Index * 2
-	// }
 	d := int(tl.Index - tl.Depth)
 	pad := ""
 	if d > 0 {
@@ -28,7 +25,7 @@ func (tl *TraceLine) Print(i, l, level, maxLenFunction, maxLenPath, maxLenLine i
 			pad = strings.Repeat(" ", d*4-3)
 		}
 	}
-	c := LoggerConfig.ColorIndicatorDebug + level + d
+	c := LoggerConfig.ColorIndicatorDebug - level - d
 
 	tl.Logger.write('t', tl.Logger.prependFormat("%s %s %s %s:%s"),
 		Wrap(pad+tl.Prefix, c),
