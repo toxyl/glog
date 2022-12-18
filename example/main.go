@@ -11,12 +11,15 @@ import (
 
 var appLogger *glog.Logger = glog.NewLogger("", glog.Pink, false, nil)
 var traceLogger *glog.Logger = glog.NewLogger("Trace", glog.BrightYellow, false, nil)
+var colorLogger *glog.Logger = glog.NewLogger("Colors", glog.DarkYellow, false, nil)
+var stringLogger *glog.Logger = glog.NewLogger("Strings", glog.Purple, false, nil)
 var messageTypesLogger *glog.Logger = glog.NewLogger("Message Type", glog.OliveGreen, false, nil)
 var boolLogger *glog.Logger = glog.NewLogger("Bool", glog.Cyan, false, nil)
 var intLogger *glog.Logger = glog.NewLogger("Int", glog.LightBlue, false, nil)
 var uintLogger *glog.Logger = glog.NewLogger("Uint", glog.Blue, false, nil)
 var floatLogger *glog.Logger = glog.NewLogger("Float", glog.DarkBlue, false, nil)
 var percentageLogger *glog.Logger = glog.NewLogger("Percentage", glog.DarkGreen, false, nil)
+var autoLogger *glog.Logger = glog.NewLogger("Auto", glog.DarkOrange, false, nil)
 var networkLogger *glog.Logger = glog.NewLogger("Network", glog.Green, false, nil)
 var timeLogger *glog.Logger = glog.NewLogger("Time", glog.Yellow, false, nil)
 var miscLogger *glog.Logger = glog.NewLogger("Misc", glog.Lime, false, func(msg string) {
@@ -49,12 +52,17 @@ func fnA() {
 }
 
 func sleep() {
-	appLogger.Default("Sleeping a bit...")
+	// appLogger.Default("Sleeping a bit...")
 	gutils.RandomSleep(100, 3000, time.Millisecond)
 }
 
+func printSection(title string) {
+	appLogger.Default("")
+	appLogger.Info("%s", glog.HighlightInfo(title))
+}
+
 func demoMessageTypes() {
-	appLogger.Info("%s", glog.HighlightInfo("MESSAGE TYPES"))
+	printSection("MESSAGE TYPES")
 
 	messageTypesLogger.Info("This is %s message", glog.HighlightInfo("an info"))
 	messageTypesLogger.Success("This is %s message", glog.HighlightSuccess("a success"))
@@ -71,89 +79,87 @@ func demoMessageTypes() {
 }
 
 func demoDataTypes() {
-	appLogger.Default("")
-	appLogger.Info("%s", glog.HighlightInfo("DATA TYPES"))
+	printSection("DATA TYPES")
 
-	boolLogger.Info("These are booleans: %s", glog.Bool(true, false))
+	boolLogger.Default("These are booleans: %s", glog.Bool(true, false))
 
-	intLogger.Info(
+	intLogger.Default(
 		"This is a negative integer, a zero-value integer and a positive integer: %s",
 		glog.Int(-23, 0, 32),
 	)
 
-	uintLogger.Info(
+	uintLogger.Default(
 		"This is a a zero-value unsigned integer and a positive unsigned integer: %s",
 		glog.Uint(0, 32),
 	)
 
-	floatLogger.Info(
+	floatLogger.Default(
 		"This is a negative float64 (2 digits precision: %s), a zero-value float64 (1 digit precision: %s) and a positive float64 (3 digits precision: %s)",
 		glog.Float64(-23.3223, 2),
 		glog.Float64(0.0, 1),
 		glog.Float64(32.2332, 3),
 	)
 
-	percentageLogger.Info(
+	percentageLogger.Default(
 		"This is a negative percentage (2 digits precision: %s), a zero-value percentage (1 digit precision: %s) and a positive percentage (3 digits precision: %s)",
 		glog.Percentage(-0.3223, 2),
 		glog.Percentage(0.0, 1),
 		glog.Percentage(0.2332, 3),
 	)
 
-	appLogger.Info("You can also let glog choose a colorizer based on type: %s", glog.Auto(true, false, 1, -4, 0, 1.23, -73.64, -0.34321, 0.698765, time.Now(), 5*time.Second, "hello", "world"))
-	appLogger.Info("Normalized float values (from %s to %s) will be shown as percentages (%s).", glog.Float64(-1.0, 1), glog.Float64(1.0, 1), glog.Auto(-1.0, 1.0))
+	autoLogger.Default("You can also let glog choose a colorizer based on type: %s", glog.Auto(true, false, 1, -4, 0, 1.23, -73.64, -0.34321, 0.698765, time.Now(), 5*time.Second, "hello", "world"))
+	autoLogger.Default("Normalized float values (from %s to %s) will be shown as percentages (%s).", glog.Float64(-1.0, 1), glog.Float64(1.0, 1), glog.Auto(-1.0, 1.0))
 }
 
 func demoNetwork() {
-	appLogger.Default("")
-	appLogger.Info("%s", glog.HighlightInfo("NETWORK"))
+	printSection("NETWORK")
 
 	networkLogger.EnablePlainLog("network-plain.log")
 	networkLogger.EnableColorLog("network-color.log")
-	networkLogger.Info(
+	networkLogger.Default(
 		"These are host:port combinations (with reverse DNS): %s, %s, %s",
 		glog.AddrIPv4Port("8.8.8.8", 80, true),
 		glog.AddrIPv4Port("172.217.168.206", 443, true),
 		glog.AddrIPv4Port("160.20.152.105", 12343, true),
 	)
-	networkLogger.Info(
+	networkLogger.Default(
 		"These are host:port combinations (without reverse DNS): %s, %s, %s",
 		glog.AddrIPv4Port("8.8.8.8", 80, false),
 		glog.AddrIPv4Port("172.217.168.206", 443, false),
 		glog.AddrIPv4Port("160.20.152.105", 12343, false),
 	)
-	networkLogger.Info(
+	networkLogger.Default(
 		"These are also host:port combinations: %s, %s, %s (with reverse DNS)",
 		glog.Addr("8.8.8.8:80", true),
 		glog.Addr("172.217.168.206:443", true),
 		glog.Addr("160.20.152.105:12343", true),
 	)
-	networkLogger.Info(
+	networkLogger.Default(
 		"These are also host:port combinations: %s, %s, %s (without reverse DNS)",
 		glog.Addr("8.8.8.8:80", false),
 		glog.Addr("172.217.168.206:443", false),
 		glog.Addr("160.20.152.105:12343", false),
 	)
-	networkLogger.Info(
+	networkLogger.Default(
 		"These are ports: %s, %s, %s, %s",
 		glog.Port(80),
 		glog.Port(443),
 		glog.Port(8080),
 		glog.Port(41230),
 	)
-	networkLogger.Info(
+	networkLogger.Default(
 		"These are IPs (with reverse DNS): %s",
 		glog.IPs([]string{"127.0.0.1", "8.8.8.8", "160.20.152.105", "255.255.255.255"}, true),
 	)
-	networkLogger.Info(
+	networkLogger.Default(
 		"These are IPs (without reverse DNS): %s",
 		glog.IPs([]string{"127.0.0.1", "8.8.8.8", "160.20.152.105", "255.255.255.255"}, false),
 	)
-	networkLogger.Info(
+	networkLogger.Default(
 		"These are URLs: %s",
 		glog.URL("https://www.google.com", "https://serverius.net", "http://some.unsafe.place-to-not-go.to"),
 	)
-	networkLogger.Info(
+	networkLogger.Default(
 		"These are more URLs: %s",
 		glog.URL(
 			"https://colab.research.google.com/github/huggingface/notebooks/blob/main/diffusers/stable_diffusion.ipynb#scrollTo=yEErJFjlrSWS",
@@ -167,24 +173,23 @@ func demoNetwork() {
 }
 
 func demoMisc() {
-	appLogger.Default("")
-	appLogger.Info("%s", glog.HighlightInfo("MISC"))
+	printSection("MISC")
 
-	miscLogger.Info(
+	miscLogger.Default(
 		"These are passwords you should not use: %s, %s, %s, %s",
 		glog.Password("password123"),
 		glog.Password("HelloWorld"),
 		glog.Password("admin"),
 		glog.Password("ILoveSex"),
 	)
-	miscLogger.Info(
+	miscLogger.Default(
 		"Here are a couple of reasons: %s, %s, %s, %s",
 		glog.Reason("the weather sucked"),
 		glog.Reason("my dog died"),
 		glog.Reason("my dog ate my homework"),
 		glog.Reason("it wasn't me"),
 	)
-	miscLogger.Info(
+	miscLogger.Default(
 		"Sensitive files: %s, %s, %s, %s",
 		glog.File("/etc/passwd"),
 		glog.File("~/.ssh/id_rsa"),
@@ -192,25 +197,22 @@ func demoMisc() {
 		glog.File("/etc/resolv.conf"),
 	)
 
-	appLogger.Default("")
-	appLogger.Info("%s", glog.HighlightInfo("STRING HIGHLIGHTING WITH AUTOMATIC COLORING"))
-	appLogger.Default("%s", glog.Highlight("This is a color highlighted text", "red", "green", "blue"))
-	appLogger.Default("%s", glog.Highlight("This is another color highlighted text", "red", "green", "blue"))
-	appLogger.Default("%s", glog.Highlight("Color is determined by each character,"))
-	appLogger.Default("%s", glog.Highlight("i.e. identical strings produce identical colors."))
-	appLogger.Default("%s", glog.Highlight("The algorithm is case-insensitive and only processes"))
-	appLogger.Default("%s", glog.Highlight("the most common characters, others are truncated to the range."))
-	appLogger.Default("%s", glog.Highlight("Highlighted text is cached, so the color does not have"))
-	appLogger.Default("%s", glog.Highlight("to be recalculated every time."))
+	printSection("STRING HIGHLIGHTING WITH AUTOMATIC COLORING")
+	stringLogger.Default("%s", glog.Highlight("This is a color highlighted text", "red", "green", "blue"))
+	stringLogger.Default("%s", glog.Highlight("This is another color highlighted text", "red", "green", "blue"))
+	stringLogger.Default("%s", glog.Highlight("Color is determined by each character,"))
+	stringLogger.Default("%s", glog.Highlight("i.e. identical strings produce identical colors."))
+	stringLogger.Default("%s", glog.Highlight("The algorithm is case-insensitive and only processes"))
+	stringLogger.Default("%s", glog.Highlight("the most common characters, others are truncated to the range."))
+	stringLogger.Default("%s", glog.Highlight("Highlighted text is cached, so the color does not have"))
+	stringLogger.Default("%s", glog.Highlight("to be recalculated every time."))
 
-	appLogger.Default("")
-	appLogger.Info("%s", glog.HighlightInfo("ANSI-AWARE VALUE PADDING"))
-	appLogger.Default("Left:   %s", glog.PadLeft(glog.Auto(1.52, "hello", 10000, -0.1), 50, '-'))
-	appLogger.Default("Right:  %s", glog.PadRight(glog.Auto(1.52, "hello", 10000, -0.1), 50, '+'))
-	appLogger.Default("Center: %s", glog.PadCenter(glog.Auto(1.52, "hello", 10000, -0.1), 50, '='))
+	printSection("ANSI-AWARE VALUE PADDING")
+	stringLogger.Default("Left:   %s", glog.PadLeft(glog.Auto(1.52, "hello", 10000, -0.1), 50, '-'))
+	stringLogger.Default("Right:  %s", glog.PadRight(glog.Auto(1.52, "hello", 10000, -0.1), 50, '+'))
+	stringLogger.Default("Center: %s", glog.PadCenter(glog.Auto(1.52, "hello", 10000, -0.1), 50, '='))
 
-	appLogger.Default("")
-	appLogger.Info("%s", glog.HighlightInfo("TRACING FUNCTION CALLS"))
+	printSection("TRACING FUNCTION CALLS")
 	traceLogger.EnableTrace(3)
 	fnA()
 	traceLogger.DisableTrace()
@@ -227,18 +229,17 @@ func demoDateTime() {
 	// Here you can find some examples for formats:
 	// https://www.geeksforgeeks.org/how-to-get-current-date-and-time-in-various-format-in-golang/
 
-	appLogger.Default("")
-	appLogger.Info("%s", glog.HighlightInfo("DATE & TIME"))
+	printSection("DATE & TIME")
 
 	timeLogger.EnablePlainLog("time-plain.log")
-	timeLogger.Info(
+	timeLogger.Default(
 		"The operation took: %s, %s, %s, %s",
 		glog.Duration(15),
 		glog.Duration(60),
 		glog.Duration(240),
 		glog.Duration(644),
 	)
-	timeLogger.Info(
+	timeLogger.Default(
 		"The operation took: %s, %s, %s, %s",
 		glog.DurationMilliseconds(15),
 		glog.DurationMilliseconds(60),
@@ -246,27 +247,27 @@ func demoDateTime() {
 		glog.DurationMilliseconds(644),
 	)
 
-	timeLogger.Info(
+	timeLogger.Default(
 		"Current time (12hr): %s",
 		glog.Time12hr(time.Now()),
 	)
-	timeLogger.Info(
+	timeLogger.Default(
 		"Current time (24hr): %s",
 		glog.Time(time.Now()),
 	)
-	timeLogger.Info(
+	timeLogger.Default(
 		"Current Unix time: %s",
 		glog.Timestamp(),
 	)
-	timeLogger.Info(
+	timeLogger.Default(
 		"Today's date: %s",
 		glog.Date(time.Now()),
 	)
-	timeLogger.Info(
+	timeLogger.Default(
 		"Today's full date (12hr): %s",
 		glog.DateTime12hr(time.Now()),
 	)
-	timeLogger.Info(
+	timeLogger.Default(
 		"Today's full date (24hr): %s",
 		glog.DateTime(time.Now()),
 	)
@@ -274,8 +275,8 @@ func demoDateTime() {
 }
 
 func demoColors() {
-	appLogger.ID = "Colors"
-	appLogger.ShowColors()
+	printSection("COLORS")
+	colorLogger.ShowColors()
 }
 
 func main() {
@@ -299,7 +300,7 @@ func main() {
 	demoColors()
 	sleep()
 
-	appLogger.Default(
+	appLogger.Success(
 		"App was %s seconds (%s milliseconds) active",
 		glog.Runtime(),
 		glog.RuntimeMilliseconds(),

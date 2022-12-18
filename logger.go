@@ -206,13 +206,13 @@ func (l *Logger) ShowColors() {
 	for i := 0; i < 8; i++ {
 		str += Wrap(fmt.Sprintf("%03d ", i), i)
 	}
-	l.Info("%s", str)
+	l.Default("%s", str)
 
 	str = ""
 	for i := 8; i < 16; i++ {
 		str += Wrap(fmt.Sprintf("%03d ", i), i)
 	}
-	l.Info("%s", str)
+	l.Default("%s", str)
 
 	for i := 16; i < 256; i++ {
 		str := ""
@@ -221,7 +221,7 @@ func (l *Logger) ShowColors() {
 			i++
 		}
 		i--
-		l.Info("%s", str)
+		l.Default("%s", str)
 	}
 }
 
