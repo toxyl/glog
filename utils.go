@@ -12,7 +12,7 @@ var (
 )
 
 func Wrap(str string, color int) string {
-	return fmt.Sprintf("\033[38;5;%dm%s\033[0m", color, str)
+	return fmt.Sprintf("\033[38;5;%dm%s\033[0m", MapColor(color), str)
 }
 
 func StripANSI(str string) string {

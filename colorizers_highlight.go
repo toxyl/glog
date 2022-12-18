@@ -1,7 +1,6 @@
 package glog
 
 import (
-	"math"
 	"strings"
 
 	"github.com/toxyl/gutils"
@@ -17,9 +16,9 @@ func getStringColor(str string) int {
 	bm := []rune(gutils.RemoveNonPrintable(strings.ToUpper(str)))
 	l := len(bm)
 	for i := 0; i < l; i++ {
-		pt += (math.Max(0.0, math.Min(96.0, float64(bm[i])-33.0)) / 96.0) / float64(l)
+		pt += (Max(0.0, Min(96.0, float64(bm[i])-33.0)) / 96.0) / float64(l)
 	}
-	stringColorCache[str] = int(88.0 + 143.0*pt) // 88 - 231 (143 total)
+	stringColorCache[str] = int(16.0 + 215.0*pt) // 16 - 231 (215 total)
 	return stringColorCache[str]
 }
 

@@ -21,7 +21,7 @@ func getIPColor(ip string) int {
 		f, _ := gutils.GetFloat(p)
 		pt += f
 	}
-	ipColorCache[ip] = int(88.0 + 143.0*(pt/4.0/255.0)) // 88 - 231 (143 total)
+	ipColorCache[ip] = int(16.0 + 215.0*(pt/4.0/255.0)) // 16 - 231 (215 total)
 	return ipColorCache[ip]
 }
 
@@ -61,8 +61,7 @@ func ConnLocal(conn net.Conn, useReverseDNS bool) string {
 }
 
 func Port(port int) string {
-	// 94 - 231 (137 total)
-	return Wrap(fmt.Sprint(port), int(94.0+137.0*(float64(port)/65535.0)))
+	return Wrap(fmt.Sprint(port), int(16.0+215.0*(float64(port)/65535.0))) // 16 - 231 (215 total)
 }
 
 func IPs(ips []string, useReverseDNS bool) string {

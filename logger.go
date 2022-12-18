@@ -216,7 +216,7 @@ func (l *Logger) ShowColors() {
 
 	for i := 16; i < 256; i++ {
 		str := ""
-		for j := 0; j < 6 && i < 256; j++ {
+		for j := 0; j < 12 && i < 256; j++ {
 			str += Wrap(fmt.Sprintf("%03d ", i), i)
 			i++
 		}
