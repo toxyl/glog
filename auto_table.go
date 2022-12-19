@@ -1,6 +1,8 @@
 package glog
 
-import "strings"
+import (
+	"strings"
+)
 
 const (
 	AUTO_PAD_LEFT = iota
@@ -9,16 +11,17 @@ const (
 )
 
 type AutoTableSeries struct {
-	Name    string
-	Values  []string
-	maxLen  int
-	padDir  int
-	padChar rune
+	Name        string
+	Values      []string
+	maxLen      int
+	padDir      int
+	padChar     rune
+	fnHighlight func(a ...interface{}) string
 }
 
 func (t *AutoTableSeries) Push(value ...interface{}) *AutoTableSeries {
 	for _, v := range value {
-		vs := Auto(v)
+		vs := t.fnHighlight(v)
 		vl := len(StripANSI(vs))
 		t.Values = append(t.Values, vs)
 		t.maxLen = Max(t.maxLen, vl)
@@ -53,26 +56,31 @@ func (t *AutoTableSeries) Header() string {
 	return h
 }
 
-func NewAutoTableSeries(name string, padDirection int, padChar rune) *AutoTableSeries {
+func NewAutoTableSeries(name string, padDirection int, padChar rune, highlighter func(a ...interface{}) string) *AutoTableSeries {
+	h := highlighter
+	if highlighter == nil {
+		h = Auto
+	}
 	return &AutoTableSeries{
-		Name:    name,
-		Values:  []string{},
-		maxLen:  len(name),
-		padDir:  padDirection,
-		padChar: padChar,
+		Name:        name,
+		Values:      []string{},
+		maxLen:      len(name),
+		padDir:      padDirection,
+		padChar:     padChar,
+		fnHighlight: h,
 	}
 }
 
-func NewAutoTableSeriesLeft(name string, padChar rune) *AutoTableSeries {
-	return NewAutoTableSeries(name, AUTO_PAD_LEFT, padChar)
+func NewAutoTableSeriesLeft(name string, padChar rune, highlighter func(a ...interface{}) string) *AutoTableSeries {
+	return NewAutoTableSeries(name, AUTO_PAD_RIGHT, padChar, highlighter)
 }
 
-func NewAutoTableSeriesRight(name string, padChar rune) *AutoTableSeries {
-	return NewAutoTableSeries(name, AUTO_PAD_RIGHT, padChar)
+func NewAutoTableSeriesRight(name string, padChar rune, highlighter func(a ...interface{}) string) *AutoTableSeries {
+	return NewAutoTableSeries(name, AUTO_PAD_LEFT, padChar, highlighter)
 }
 
-func NewAutoTableSeriesCenter(name string, padChar rune) *AutoTableSeries {
-	return NewAutoTableSeries(name, AUTO_PAD_CENTER, padChar)
+func NewAutoTableSeriesCenter(name string, padChar rune, highlighter func(a ...interface{}) string) *AutoTableSeries {
+	return NewAutoTableSeries(name, AUTO_PAD_CENTER, padChar, highlighter)
 }
 
 type AutoTable struct {
