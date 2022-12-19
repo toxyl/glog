@@ -225,6 +225,12 @@ func (l *Logger) ShowColors() {
 	}
 }
 
+func (l *Logger) Table(at *AutoTable) {
+	for _, line := range at.TableRows() {
+		l.Default("%s", line)
+	}
+}
+
 // NewLogger creates a new logger instance. Pass `nil` as `messageHandler` if you want logs to be printed to screen,
 // else provide your own handler.
 func NewLogger(id string, color int, debugMode bool, messageHandler func(string)) *Logger {

@@ -12,6 +12,8 @@ func Auto(iface ...interface{}) string {
 	for _, i := range iface {
 		text := ""
 		switch t := i.(type) {
+		case nil:
+			text = Wrap("nil", LoggerConfig.ColorNil)
 		case bool:
 			text = Bool(t)
 		case int:
