@@ -225,8 +225,8 @@ func (l *Logger) ShowColors() {
 	}
 }
 
-func (l *Logger) Table(at *AutoTable) {
-	for _, line := range at.TableRows() {
+func (l *Logger) Table(ats ...*AutoTableSeries) {
+	for _, line := range NewAutoTable(ats...).TableRows() {
 		l.Default("%s", line)
 	}
 }

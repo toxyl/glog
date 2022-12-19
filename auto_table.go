@@ -12,7 +12,7 @@ const (
 
 type AutoTableSeries struct {
 	Name        string
-	Values      []string
+	values      []string
 	maxLen      int
 	padDir      int
 	padChar     rune
@@ -23,15 +23,15 @@ func (t *AutoTableSeries) Push(value ...interface{}) *AutoTableSeries {
 	for _, v := range value {
 		vs := t.fnHighlight(v)
 		vl := len(StripANSI(vs))
-		t.Values = append(t.Values, vs)
+		t.values = append(t.values, vs)
 		t.maxLen = Max(t.maxLen, vl)
 	}
 	return t
 }
 
-func (t *AutoTableSeries) PadValues() *AutoTableSeries {
-	for i := range t.Values {
-		vs := t.Values[i]
+func (t *AutoTableSeries) padValues() *AutoTableSeries {
+	for i := range t.values {
+		vs := t.values[i]
 		if t.padDir == AUTO_PAD_LEFT {
 			vs = PadLeft(vs, t.maxLen, t.padChar)
 		} else if t.padDir == AUTO_PAD_CENTER {
@@ -39,12 +39,12 @@ func (t *AutoTableSeries) PadValues() *AutoTableSeries {
 		} else if t.padDir == AUTO_PAD_RIGHT {
 			vs = PadRight(vs, t.maxLen, t.padChar)
 		}
-		t.Values[i] = vs
+		t.values[i] = vs
 	}
 	return t
 }
 
-func (t *AutoTableSeries) Header() string {
+func (t *AutoTableSeries) header() string {
 	h := Auto(t.Name)
 	if t.padDir == AUTO_PAD_LEFT {
 		h = PadLeft(h, t.maxLen, t.padChar)
@@ -63,7 +63,7 @@ func NewAutoTableSeries(name string, padDirection int, padChar rune, highlighter
 	}
 	return &AutoTableSeries{
 		Name:        name,
-		Values:      []string{},
+		values:      []string{},
 		maxLen:      len(name),
 		padDir:      padDirection,
 		padChar:     padChar,
@@ -93,9 +93,9 @@ func (at *AutoTable) TableRows() []string {
 	headers := make([]string, ls)
 	rows := [][]string{} // rows - columns
 	for col, series := range at.series {
-		headers[col] = series.Header()
+		headers[col] = series.header()
 		topRow[col] = strings.Repeat("─", series.maxLen)
-		for row, v := range series.PadValues().Values {
+		for row, v := range series.padValues().values {
 			if len(rows) < row+1 {
 				rows = append(rows, make([]string, ls))
 			}
