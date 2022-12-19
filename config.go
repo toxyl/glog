@@ -3,6 +3,7 @@ package glog
 import "time"
 
 type Config struct {
+	TablePadChar       rune
 	AutoFloatPrecision int
 	TimeFormat,
 	TimeFormat12hr,
@@ -65,6 +66,7 @@ func (c *Config) AddIndicator(indicator rune, value string, color int) {
 
 func NewDefaultConfig() *Config {
 	c := &Config{
+		TablePadChar:            ' ',
 		AutoFloatPrecision:      2,
 		TimeFormat:              "15:04:05",
 		TimeFormat12hr:          "03:04:05pm",

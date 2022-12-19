@@ -5,12 +5,12 @@ import (
 )
 
 const (
-	AUTO_PAD_LEFT = iota
-	AUTO_PAD_CENTER
-	AUTO_PAD_RIGHT
+	PAD_LEFT = iota
+	PAD_CENTER
+	PAD_RIGHT
 )
 
-type AutoTableSeries struct {
+type TableColumn struct {
 	Name        string
 	values      []string
 	maxLen      int
@@ -19,7 +19,7 @@ type AutoTableSeries struct {
 	fnHighlight func(a ...interface{}) string
 }
 
-func (t *AutoTableSeries) Push(value ...interface{}) *AutoTableSeries {
+func (t *TableColumn) Push(value ...interface{}) *TableColumn {
 	for _, v := range value {
 		vs := t.fnHighlight(v)
 		vl := len(StripANSI(vs))
@@ -29,14 +29,14 @@ func (t *AutoTableSeries) Push(value ...interface{}) *AutoTableSeries {
 	return t
 }
 
-func (t *AutoTableSeries) padValues() *AutoTableSeries {
+func (t *TableColumn) padValues() *TableColumn {
 	for i := range t.values {
 		vs := t.values[i]
-		if t.padDir == AUTO_PAD_LEFT {
+		if t.padDir == PAD_LEFT {
 			vs = PadLeft(vs, t.maxLen, t.padChar)
-		} else if t.padDir == AUTO_PAD_CENTER {
+		} else if t.padDir == PAD_CENTER {
 			vs = PadCenter(vs, t.maxLen, t.padChar)
-		} else if t.padDir == AUTO_PAD_RIGHT {
+		} else if t.padDir == PAD_RIGHT {
 			vs = PadRight(vs, t.maxLen, t.padChar)
 		}
 		t.values[i] = vs
@@ -44,24 +44,24 @@ func (t *AutoTableSeries) padValues() *AutoTableSeries {
 	return t
 }
 
-func (t *AutoTableSeries) header() string {
+func (t *TableColumn) header() string {
 	h := Auto(t.Name)
-	if t.padDir == AUTO_PAD_LEFT {
+	if t.padDir == PAD_LEFT {
 		h = PadLeft(h, t.maxLen, t.padChar)
-	} else if t.padDir == AUTO_PAD_CENTER {
+	} else if t.padDir == PAD_CENTER {
 		h = PadCenter(h, t.maxLen, t.padChar)
-	} else if t.padDir == AUTO_PAD_RIGHT {
+	} else if t.padDir == PAD_RIGHT {
 		h = PadRight(h, t.maxLen, t.padChar)
 	}
 	return h
 }
 
-func NewAutoTableSeries(name string, padDirection int, padChar rune, highlighter func(a ...interface{}) string) *AutoTableSeries {
+func NewTableColumnCustom(name string, padDirection int, padChar rune, highlighter func(a ...interface{}) string) *TableColumn {
 	h := highlighter
 	if highlighter == nil {
 		h = Auto
 	}
-	return &AutoTableSeries{
+	return &TableColumn{
 		Name:        name,
 		values:      []string{},
 		maxLen:      len(name),
@@ -71,23 +71,39 @@ func NewAutoTableSeries(name string, padDirection int, padChar rune, highlighter
 	}
 }
 
-func NewAutoTableSeriesLeft(name string, padChar rune, highlighter func(a ...interface{}) string) *AutoTableSeries {
-	return NewAutoTableSeries(name, AUTO_PAD_RIGHT, padChar, highlighter)
+func NewTableColumn(name string, padDirection int) *TableColumn {
+	return NewTableColumnCustom(name, padDirection, LoggerConfig.TablePadChar, nil)
 }
 
-func NewAutoTableSeriesRight(name string, padChar rune, highlighter func(a ...interface{}) string) *AutoTableSeries {
-	return NewAutoTableSeries(name, AUTO_PAD_LEFT, padChar, highlighter)
+func NewTableColumnLeftCustom(name string, padChar rune, highlighter func(a ...interface{}) string) *TableColumn {
+	return NewTableColumnCustom(name, PAD_RIGHT, padChar, highlighter)
 }
 
-func NewAutoTableSeriesCenter(name string, padChar rune, highlighter func(a ...interface{}) string) *AutoTableSeries {
-	return NewAutoTableSeries(name, AUTO_PAD_CENTER, padChar, highlighter)
+func NewTableColumnLeft(name string) *TableColumn {
+	return NewTableColumn(name, PAD_RIGHT)
 }
 
-type AutoTable struct {
-	series []*AutoTableSeries
+func NewTableColumnRightCustom(name string, padChar rune, highlighter func(a ...interface{}) string) *TableColumn {
+	return NewTableColumnCustom(name, PAD_LEFT, padChar, highlighter)
 }
 
-func (at *AutoTable) TableRows() []string {
+func NewTableColumnRight(name string) *TableColumn {
+	return NewTableColumn(name, PAD_LEFT)
+}
+
+func NewTableColumnCenterCustom(name string, padChar rune, highlighter func(a ...interface{}) string) *TableColumn {
+	return NewTableColumnCustom(name, PAD_CENTER, padChar, highlighter)
+}
+
+func NewTableColumnCenter(name string) *TableColumn {
+	return NewTableColumn(name, PAD_CENTER)
+}
+
+type Table struct {
+	series []*TableColumn
+}
+
+func (at *Table) Rows() []string {
 	ls := len(at.series)
 	topRow := make([]string, ls)
 	headers := make([]string, ls)
@@ -110,13 +126,13 @@ func (at *AutoTable) TableRows() []string {
 	for _, r := range rows {
 		for i, _ := range r {
 			if r[i] == "" {
-				if at.series[i].padDir == AUTO_PAD_LEFT {
+				if at.series[i].padDir == PAD_LEFT {
 					r[i] = PadLeft(Auto("N/A"), at.series[i].maxLen, at.series[i].padChar)
 
-				} else if at.series[i].padDir == AUTO_PAD_CENTER {
+				} else if at.series[i].padDir == PAD_CENTER {
 					r[i] = PadCenter(Auto("N/A"), at.series[i].maxLen, at.series[i].padChar)
 
-				} else if at.series[i].padDir == AUTO_PAD_RIGHT {
+				} else if at.series[i].padDir == PAD_RIGHT {
 					r[i] = PadRight(Auto("N/A"), at.series[i].maxLen, at.series[i].padChar)
 
 				}
@@ -128,8 +144,8 @@ func (at *AutoTable) TableRows() []string {
 	return res
 }
 
-func NewAutoTable(series ...*AutoTableSeries) *AutoTable {
-	return &AutoTable{
+func NewTable(series ...*TableColumn) *Table {
+	return &Table{
 		series: series,
 	}
 }
