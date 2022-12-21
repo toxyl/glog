@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"sort"
 	"strings"
 	"time"
 )
@@ -227,6 +228,27 @@ func (l *Logger) ShowColors() {
 
 func (l *Logger) Table(ats ...*TableColumn) {
 	for _, line := range NewTable(ats...).Rows() {
+		l.Default("%s", line)
+	}
+}
+
+func (l *Logger) KeyValueTable(data map[string]interface{}) {
+	atsKeys := NewTableColumnLeft("Key")
+	atsValues := NewTableColumnLeft("Value")
+	keys := []string{}
+
+	for k, _ := range data {
+		keys = append(keys, k)
+	}
+
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		atsKeys.Push(k)
+		atsValues.Push(data[k])
+	}
+
+	for _, line := range NewTable(atsKeys, atsValues).Rows() {
 		l.Default("%s", line)
 	}
 }

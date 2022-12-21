@@ -291,6 +291,15 @@ func demoTables() {
 		glog.NewTableColumnCenterCustom("Pad Char", '∙', nil).Push(-10, []interface{}{0, 5, 1.4, "test"}, 30.0/2.9, nil, false, "so long and", "thanks for all", "the fish", time.Now(), 90, 100),
 		glog.NewTableColumnCenterCustom("No Highlight", ' ', fmt.Sprint).Push(-10, glog.Auto([]interface{}{0, 5, 1.4, "test"}), 30.0/2.9, nil, false, "so long and", "thanks for all", "the fish", time.Now(), 90, 100),
 	)
+	tableLogger.KeyValueTable(
+		map[string]interface{}{
+			"key 1": 123,
+			"key 2": 0.123,
+			"key 3": -1,
+			"key 4": "hello world",
+			"key 5": []string{"this", "is", "useful", "for", "debugging"},
+		},
+	)
 }
 
 func main() {
