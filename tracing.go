@@ -31,8 +31,8 @@ func (tl *TraceLine) Print(i, l, level, maxLenFunction, maxLenPath, maxLenLine i
 		Wrap(pad+tl.Prefix, c),
 		Auto(tl.Function),
 		Wrap(strings.Repeat("∙", maxLenFunction+(l-i)*4-len(tl.Function)-6), c),
-		PadLeft(File(tl.Path), maxLenPath, ' '),
-		PadRight(Int(tl.Line), maxLenLine, ' '),
+		File(tl.Path),
+		Int(tl.Line),
 	)
 }
 
