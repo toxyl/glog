@@ -10,6 +10,9 @@ func Password(password string) string {
 }
 
 func Error(err error) string {
+	if err == nil {
+		return ""
+	}
 	return Wrap(err.Error(), LoggerConfig.ColorError)
 }
 
