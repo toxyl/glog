@@ -254,8 +254,11 @@ func (l *Logger) KeyValueTable(data map[string]interface{}) {
 }
 
 // NewLogger creates a new logger instance. Pass `nil` as `messageHandler` if you want logs to be printed to screen,
-// else provide your own handler.
+// else provide your own handler. Set `color` to `-1` to let glog choose one for you.
 func NewLogger(id string, color int, debugMode bool, messageHandler func(string)) *Logger {
+	if color == -1 {
+		color = getStringColor(id)
+	}
 	return &Logger{
 		ID:         id,
 		color:      color,
@@ -266,4 +269,8 @@ func NewLogger(id string, color int, debugMode bool, messageHandler func(string)
 		traceMode:  false,
 		traceLevel: 0,
 	}
+}
+
+func NewLoggerSimple(id string) *Logger {
+	return NewLogger(id, -1, false, nil)
 }

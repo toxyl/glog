@@ -11,7 +11,7 @@ func Password(password string) string {
 
 func Error(err error) string {
 	if err == nil {
-		return ""
+		return Wrap("nil", LoggerConfig.ColorNil)
 	}
 	return Wrap(err.Error(), LoggerConfig.ColorError)
 }

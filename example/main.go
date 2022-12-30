@@ -10,20 +10,20 @@ import (
 )
 
 var appLogger *glog.Logger = glog.NewLogger("", glog.Pink, false, nil)
-var traceLogger *glog.Logger = glog.NewLogger("Trace", glog.BrightYellow, false, nil)
-var colorLogger *glog.Logger = glog.NewLogger("Colors", glog.DarkYellow, false, nil)
+var traceLogger *glog.Logger = glog.NewLoggerSimple("Trace")
+var colorLogger *glog.Logger = glog.NewLoggerSimple("Colors")
 var stringLogger *glog.Logger = glog.NewLogger("Strings", glog.Purple, false, nil)
-var messageTypesLogger *glog.Logger = glog.NewLogger("Message Type", glog.OliveGreen, false, nil)
+var messageTypesLogger *glog.Logger = glog.NewLoggerSimple("Message Type")
 var boolLogger *glog.Logger = glog.NewLogger("Bool", glog.Cyan, false, nil)
 var intLogger *glog.Logger = glog.NewLogger("Int", glog.LightBlue, false, nil)
 var uintLogger *glog.Logger = glog.NewLogger("Uint", glog.Blue, false, nil)
 var floatLogger *glog.Logger = glog.NewLogger("Float", glog.DarkBlue, false, nil)
 var percentageLogger *glog.Logger = glog.NewLogger("Percentage", glog.DarkGreen, false, nil)
-var autoLogger *glog.Logger = glog.NewLogger("Auto", glog.DarkOrange, false, nil)
+var autoLogger *glog.Logger = glog.NewLoggerSimple("Auto")
 var networkLogger *glog.Logger = glog.NewLogger("Network", glog.Green, false, nil)
-var timeLogger *glog.Logger = glog.NewLogger("Time", glog.Yellow, false, nil)
+var timeLogger *glog.Logger = glog.NewLoggerSimple("Time")
 var tableLogger *glog.Logger = glog.NewLogger("Tables", glog.MediumGray, false, nil)
-var miscLogger *glog.Logger = glog.NewLogger("Misc", glog.Lime, false, func(msg string) {
+var miscLogger *glog.Logger = glog.NewLogger("Misc", -1, false, func(msg string) {
 	fmt.Print("With    colors: " + msg)                 // we just echo what we get
 	fmt.Print("Without colors: " + glog.StripANSI(msg)) // and again, but without colors
 })
