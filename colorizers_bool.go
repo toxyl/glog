@@ -2,7 +2,7 @@ package glog
 
 import "strings"
 
-// Bool colors the result green if `b` is true, else it colors it red.
+// Bool colors the given booleans, it will use `LoggerConfig.ColorBoolFalse` for `false` and `LoggerConfig.ColorBoolTrue` for `true`.
 func Bool(b ...bool) string {
 	res := []string{}
 	for _, bo := range b {

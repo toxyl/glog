@@ -7,7 +7,7 @@ import (
 
 // IntAmount colors `n` as int and appends either the
 // given singular (`n` == 1) or plural (`n` > 1 || `n` == 0).
-func IntAmount(n int, singular, plural string) string {
+func IntAmount[I Ints](n I, singular, plural string) string {
 	unit := singular
 	if n > 1 {
 		unit = plural
@@ -26,7 +26,7 @@ func IntAmount(n int, singular, plural string) string {
 }
 
 // Int colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
-func Int(n ...int) string {
+func Int[I Ints](n ...I) string {
 	res := []string{}
 	for _, num := range n {
 		color := LoggerConfig.ColorIntPositive
@@ -38,40 +38,4 @@ func Int(n ...int) string {
 		res = append(res, Wrap(fmt.Sprintf("%d", num), color))
 	}
 	return strings.Join(res, ", ")
-}
-
-// Int8 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
-func Int8(n ...int8) string {
-	ints := []int{}
-	for _, num := range n {
-		ints = append(ints, int(num))
-	}
-	return Int(ints...)
-}
-
-// Int16 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
-func Int16(n ...int16) string {
-	ints := []int{}
-	for _, num := range n {
-		ints = append(ints, int(num))
-	}
-	return Int(ints...)
-}
-
-// Int32 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
-func Int32(n ...int32) string {
-	ints := []int{}
-	for _, num := range n {
-		ints = append(ints, int(num))
-	}
-	return Int(ints...)
-}
-
-// Int64 colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
-func Int64(n ...int64) string {
-	ints := []int{}
-	for _, num := range n {
-		ints = append(ints, int(num))
-	}
-	return Int(ints...)
 }

@@ -5,12 +5,12 @@ import (
 	"time"
 )
 
-func Duration(seconds uint) string {
-	return Wrap(time.Duration(seconds*uint(time.Second)).String(), LoggerConfig.ColorDuration)
+func Duration[D Durations](seconds D) string {
+	return Wrap(time.Duration(seconds*D(time.Second)).String(), LoggerConfig.ColorDuration)
 }
 
-func DurationMilliseconds(milliseconds uint) string {
-	return Wrap(time.Duration(milliseconds*uint(time.Millisecond)).String(), LoggerConfig.ColorDuration)
+func DurationMilliseconds[D Durations](milliseconds D) string {
+	return Wrap(time.Duration(milliseconds*D(time.Millisecond)).String(), LoggerConfig.ColorDuration)
 }
 
 // TimeCustom formats `t` according to the given format.
@@ -19,31 +19,31 @@ func TimeCustom(t time.Time, format string) string {
 }
 
 // Time12hr parses the time portion of `t`, formats it as AM/PM (03:04:05pm).
-// Overwrite `DefaultTimeFormat12hr` to use a different format.
+// Overwrite `LoggerConfig.DefaultTimeFormat12hr` to use a different format.
 func Time12hr(t time.Time) string {
 	return TimeCustom(t, LoggerConfig.TimeFormat12hr)
 }
 
 // Time parses the time portion of `t`, formats it (15:04:05).
-// Overwrite `DefaultTimeFormat` to use a different format.
+// Overwrite `LoggerConfig.DefaultTimeFormat` to use a different format.
 func Time(t time.Time) string {
 	return TimeCustom(t, LoggerConfig.TimeFormat)
 }
 
 // Date parses the date portion of `t`, formats it (2006-01-02).
-// Overwrite `DefaultDateFormat` to use a different format.
+// Overwrite `LoggerConfig.DefaultDateFormat` to use a different format.
 func Date(t time.Time) string {
 	return TimeCustom(t, LoggerConfig.DateFormat)
 }
 
 // DateTime parses `t`, formats it (2006-01-02 15:04:05).
-// Overwrite `DefaultDateTimeFormat` to use a different format.
+// Overwrite `LoggerConfig.DefaultDateTimeFormat` to use a different format.
 func DateTime(t time.Time) string {
 	return TimeCustom(t, LoggerConfig.DateTimeFormat)
 }
 
 // DateTime12hr parses `t`, formats it as AM/PM (2006-01-02 03:04:05pm).
-// Overwrite `DefaultDateTimeFormat12hr` to use a different format.
+// Overwrite `LoggerConfig.DefaultDateTimeFormat12hr` to use a different format.
 func DateTime12hr(t time.Time) string {
 	return TimeCustom(t, LoggerConfig.DateTimeFormat12hr)
 }

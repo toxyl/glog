@@ -3,121 +3,108 @@ package glog
 import (
 	"fmt"
 	"strings"
-	"time"
 )
 
 // Auto will automatically choose a highlighter based on the type of the given `interface{}`s.
-func Auto(iface ...interface{}) string {
+func Auto(values ...interface{}) string {
 	res := []string{}
-	for _, i := range iface {
-		text := ""
-		switch t := i.(type) {
-		case nil:
-			text = Wrap("nil", LoggerConfig.ColorNil)
-		case []bool:
-			text = Bool(t...)
-		case []int:
-			text = Int(t...)
-		case []int8:
-			text = Int8(t...)
-		case []int16:
-			text = Int16(t...)
-		case []int32:
-			text = Int32(t...)
-		case []int64:
-			text = Int64(t...)
-		case []uint:
-			text = Uint(t...)
-		case []uint8:
-			text = Uint8(t...)
-		case []uint16:
-			text = Uint16(t...)
-		case []uint32:
-			text = Uint32(t...)
-		case []uint64:
-			text = Uint64(t...)
-		case []float32:
-			res := []string{}
-			for _, v := range t {
-				if v >= -1.0 && v <= 1.0 {
-					res = append(res, Percentage(float64(v), LoggerConfig.AutoFloatPrecision))
-				} else {
-					res = append(res, Float32(v, LoggerConfig.AutoFloatPrecision))
-				}
-			}
-			text = strings.Join(res, ", ")
-		case []float64:
-			res := []string{}
-			for _, v := range t {
-				if v >= -1.0 && v <= 1.0 {
-					res = append(res, Percentage(float64(v), LoggerConfig.AutoFloatPrecision))
-				} else {
-					res = append(res, Float64(v, LoggerConfig.AutoFloatPrecision))
-				}
-			}
-			text = strings.Join(res, ", ")
-		case []time.Time:
-			res := []string{}
-			for _, v := range t {
-				res = append(res, DateTime(v))
-			}
-			text = strings.Join(res, ", ")
-		case []time.Duration:
-			res := []string{}
-			for _, v := range t {
-				res = append(res, Duration(uint(v.Seconds())))
-			}
-			text = strings.Join(res, ", ")
-		case []string:
-			res := []string{}
-			for _, v := range t {
-				res = append(res, Highlight(v))
-			}
-			text = strings.Join(res, ", ")
-		case []interface{}:
-			text = Auto(t...)
-		case bool:
-			text = Bool(t)
-		case int:
-			text = Int(t)
-		case int8:
-			text = Int8(t)
-		case int16:
-			text = Int16(t)
-		case int32:
-			text = Int32(t)
-		case int64:
-			text = Int64(t)
-		case uint:
-			text = Uint(t)
-		case uint8:
-			text = Uint8(t)
-		case uint16:
-			text = Uint16(t)
-		case uint32:
-			text = Uint32(t)
-		case uint64:
-			text = Uint64(t)
-		case float32:
-			if t >= -1.0 && t <= 1.0 {
-				text = Percentage(float64(t), LoggerConfig.AutoFloatPrecision)
-			} else {
-				text = Float32(t, LoggerConfig.AutoFloatPrecision)
-			}
-		case float64:
-			if t >= -1.0 && t <= 1.0 {
-				text = Percentage(t, LoggerConfig.AutoFloatPrecision)
-			} else {
-				text = Float64(t, LoggerConfig.AutoFloatPrecision)
-			}
-		case time.Time:
-			text = DateTime(t)
-		case time.Duration:
-			text = Duration(uint(t.Seconds()))
-		default:
-			text = Highlight(fmt.Sprint(t))
+	for _, i := range values {
+		if ok, v := castBoolSlice(i); ok {
+			res = append(res, Bool(v...))
+			continue
 		}
-		res = append(res, text)
+
+		if ok, v := castIntSlice(i); ok {
+			res = append(res, Int(v...))
+			continue
+		}
+
+		if ok, v := castUintSlice(i); ok {
+			res = append(res, Uint(v...))
+			continue
+		}
+
+		if ok, v := castFloatSlice(i); ok {
+			for _, f := range v {
+				if f >= -1.0 && f <= 1.0 {
+					res = append(res, Percentage(f, LoggerConfig.AutoFloatPrecision))
+				} else {
+					res = append(res, Float(f, LoggerConfig.AutoFloatPrecision))
+				}
+			}
+			continue
+		}
+
+		if ok, v := castTimeSlice(i); ok {
+			for _, t := range v {
+				res = append(res, DateTime(t))
+			}
+			continue
+		}
+
+		if ok, v := castDurationSlice(i); ok {
+			for _, d := range v {
+				res = append(res, Duration(d.Seconds()))
+			}
+			continue
+		}
+
+		if ok, v := castStringSlice(i); ok {
+			res = append(res, Highlight(v...))
+			continue
+		}
+
+		if ok, v := castBool(i); ok {
+			res = append(res, Bool(v))
+			continue
+		}
+
+		if ok, v := castInt(i); ok {
+			res = append(res, Int(v))
+			continue
+		}
+
+		if ok, v := castUint(i); ok {
+			res = append(res, Uint(v))
+			continue
+		}
+
+		if ok, normalized, v := castFloat(i); ok {
+			if normalized {
+				res = append(res, Percentage(v, LoggerConfig.AutoFloatPrecision))
+			} else {
+				res = append(res, Float(v, LoggerConfig.AutoFloatPrecision))
+			}
+			continue
+		}
+
+		if ok, v := castTime(i); ok {
+			res = append(res, DateTime(v))
+			continue
+		}
+
+		if ok, v := castDuration(i); ok {
+			res = append(res, Duration(v.Seconds()))
+			continue
+		}
+
+		if ok, v := castString(i); ok {
+			res = append(res, Highlight(v))
+			continue
+		}
+
+		if i == nil {
+			res = append(res, Wrap("nil", LoggerConfig.ColorNil))
+			continue
+		}
+
+		if ok, v := castInterfaceSlice(i); ok {
+			res = append(res, Auto(v...))
+			continue
+		}
+
+		// if we get we have an unknown type, let's output it as string
+		res = append(res, Highlight(fmt.Sprint(i)))
 	}
 	return strings.Join(res, ", ")
 }

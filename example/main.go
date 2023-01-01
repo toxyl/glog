@@ -91,14 +91,14 @@ func demoDataTypes() {
 
 	uintLogger.Default(
 		"This is a a zero-value unsigned integer and a positive unsigned integer: %s",
-		glog.Uint(0, 32),
+		glog.Uint(uint(0), uint(32)),
 	)
 
 	floatLogger.Default(
 		"This is a negative float64 (2 digits precision: %s), a zero-value float64 (1 digit precision: %s) and a positive float64 (3 digits precision: %s)",
-		glog.Float64(-23.3223, 2),
-		glog.Float64(0.0, 1),
-		glog.Float64(32.2332, 3),
+		glog.Float(-23.3223, 2),
+		glog.Float(0.0, 1),
+		glog.Float(32.2332, 3),
 	)
 
 	percentageLogger.Default(
@@ -109,7 +109,7 @@ func demoDataTypes() {
 	)
 
 	autoLogger.Default("You can also let glog choose a colorizer based on type: %s", glog.Auto(true, false, 1, -4, 0, 1.23, -73.64, -0.34321, 0.698765, time.Now(), 5*time.Second, "hello", "world"))
-	autoLogger.Default("Normalized float values (from %s to %s) will be shown as percentages (%s).", glog.Float64(-1.0, 1), glog.Float64(1.0, 1), glog.Auto(-1.0, 1.0))
+	autoLogger.Default("Normalized float values (from %s to %s) will be shown as percentages (%s).", glog.Float(-1.0, 1), glog.Float(1.0, 1), glog.Auto(-1.0, 1.0))
 }
 
 func demoNetwork() {
@@ -225,9 +225,9 @@ func demoMisc() {
 func demoDateTime() {
 	// Hint: You can change the default time and date formats using these variables:
 	//
-	// glog.TimeFormat     = "15:04:05"
-	// glog.TimeFormat12hr = "03:04:05pm"
-	// glog.DateFormat     = "2006-01-02"
+	// glog.LoggerConfig.TimeFormat     = "15:04:05"
+	// glog.LoggerConfig.TimeFormat12hr = "03:04:05pm"
+	// glog.LoggerConfig.DateFormat     = "2006-01-02"
 	//
 	// Here you can find some examples for formats:
 	// https://www.geeksforgeeks.org/how-to-get-current-date-and-time-in-various-format-in-golang/
@@ -239,13 +239,13 @@ func demoDateTime() {
 		"The operation took: %s, %s, %s, %s",
 		glog.Duration(15),
 		glog.Duration(60),
-		glog.Duration(240),
+		glog.Duration(240.5),
 		glog.Duration(644),
 	)
 	timeLogger.Default(
 		"The operation took: %s, %s, %s, %s",
 		glog.DurationMilliseconds(15),
-		glog.DurationMilliseconds(60),
+		glog.DurationMilliseconds(60.5),
 		glog.DurationMilliseconds(240),
 		glog.DurationMilliseconds(644),
 	)

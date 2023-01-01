@@ -2,26 +2,9 @@ package glog
 
 import (
 	"strings"
-
-	"github.com/toxyl/gutils"
 )
 
-var stringColorCache map[string]int = map[string]int{}
-
-func getStringColor(str string) int {
-	if v, ok := stringColorCache[str]; ok {
-		return v
-	}
-	pt := 0.0
-	bm := []rune(gutils.RemoveNonPrintable(str))
-	l := len(bm)
-	for i := 0; i < l; i++ {
-		pt += (Max(0.0, Min(94.0, float64(bm[i])-32.0)) / 94.0) / float64(l)
-	}
-	stringColorCache[str] = int(16.0 + 215.0*pt) // 16 - 231 (215 total)
-	return stringColorCache[str]
-}
-
+// Highlight colorizes each given string (identical strings always get the same color).
 func Highlight(message ...string) string {
 	res := []string{}
 	for _, msg := range message {
@@ -30,38 +13,47 @@ func Highlight(message ...string) string {
 	return strings.Join(res, ", ")
 }
 
+// HighlightInfo colorizes the `message` using `LoggerConfig.ColorIndicatorInfo`.
 func HighlightInfo(message string) string {
-	return LoggerConfig.Indicators['i'].Wrap(message)
+	return Wrap(message, LoggerConfig.ColorIndicatorInfo)
 }
 
+// HighlightOK colorizes the `message` using `LoggerConfig.ColorIndicatorOK`.
 func HighlightOK(message string) string {
-	return LoggerConfig.Indicators['+'].Wrap(message)
+	return Wrap(message, LoggerConfig.ColorIndicatorOK)
 }
 
+// HighlightSuccess colorizes the `message` using `LoggerConfig.ColorIndicatorSuccess`.
 func HighlightSuccess(message string) string {
-	return LoggerConfig.Indicators['✓'].Wrap(message)
+	return Wrap(message, LoggerConfig.ColorIndicatorSuccess)
 }
 
+// HighlightNotOK colorizes the `message` using `LoggerConfig.ColorIndicatorNotOK`.
 func HighlightNotOK(message string) string {
-	return LoggerConfig.Indicators['-'].Wrap(message)
+	return Wrap(message, LoggerConfig.ColorIndicatorNotOK)
 }
 
+// HighlightError colorizes the `message` using `LoggerConfig.ColorIndicatorError`.
 func HighlightError(message string) string {
-	return LoggerConfig.Indicators['x'].Wrap(message)
+	return Wrap(message, LoggerConfig.ColorIndicatorError)
 }
 
+// HighlightWarning colorizes the `message` using `LoggerConfig.ColorIndicatorWarning`.
 func HighlightWarning(message string) string {
-	return LoggerConfig.Indicators['!'].Wrap(message)
+	return Wrap(message, LoggerConfig.ColorIndicatorWarning)
 }
 
+// HighlightDebug colorizes the `message` using `LoggerConfig.ColorIndicatorDebug`.
 func HighlightDebug(message string) string {
-	return LoggerConfig.Indicators['d'].Wrap(message)
+	return Wrap(message, LoggerConfig.ColorIndicatorDebug)
 }
 
+// HighlightQuestion colorizes the `message` using `LoggerConfig.ColorIndicatorQuestion`.
 func HighlightQuestion(message string) string {
-	return LoggerConfig.Indicators['?'].Wrap(message)
+	return Wrap(message, LoggerConfig.ColorIndicatorQuestion)
 }
 
+// HighlightTrace colorizes the `message` using `LoggerConfig.ColorIndicatorTrace`.
 func HighlightTrace(message string) string {
-	return LoggerConfig.Indicators['t'].Wrap(message)
+	return Wrap(message, LoggerConfig.ColorIndicatorTrace)
 }

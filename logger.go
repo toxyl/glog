@@ -53,6 +53,7 @@ func (l *Logger) EnableColorLog(path string) {
 func (l *Logger) DisableColorLog() {
 	l.fileColor = ""
 }
+
 func (l *Logger) write(indicator rune, format string, a ...interface{}) {
 	prefix := ""
 	if LoggerConfig.ShowIndicator {
