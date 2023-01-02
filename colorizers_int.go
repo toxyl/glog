@@ -7,7 +7,7 @@ import (
 
 // IntAmount colors `n` as int and appends either the
 // given singular (`n` == 1) or plural (`n` > 1 || `n` == 0).
-func IntAmount[I Ints](n I, singular, plural string) string {
+func IntAmount[I IntOrUint](n I, singular, plural string) string {
 	unit := singular
 	if n > 1 {
 		unit = plural
@@ -26,7 +26,7 @@ func IntAmount[I Ints](n I, singular, plural string) string {
 }
 
 // Int colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
-func Int[I Ints](n ...I) string {
+func Int[I IntOrUint](n ...I) string {
 	res := []string{}
 	for _, num := range n {
 		color := LoggerConfig.ColorIntPositive
