@@ -258,7 +258,7 @@ func (l *Logger) KeyValueTable(data map[string]interface{}) {
 // else provide your own handler. Set `color` to `-1` to let glog choose one for you.
 func NewLogger(id string, color int, debugMode bool, messageHandler func(string)) *Logger {
 	if color == -1 {
-		color = getStringColor(id)
+		color = stringColorCache.Get(id)
 	}
 	return &Logger{
 		ID:         id,

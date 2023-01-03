@@ -8,7 +8,7 @@ import (
 func Highlight(message ...string) string {
 	res := []string{}
 	for _, msg := range message {
-		res = append(res, Wrap(msg, getStringColor(msg)))
+		res = append(res, Wrap(msg, stringColorCache.Get(msg)))
 	}
 	return strings.Join(res, ", ")
 }
