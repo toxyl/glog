@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"math"
 	"regexp"
-	"strings"
 )
 
 var (
-	reNonANSI = regexp.MustCompile(`\033\[38;5;\d+m`)
+	reANSIClose = regexp.MustCompile(`\033\[0m`)
+	reANSIOpen  = regexp.MustCompile(`\033\[38;5;\d+m`)
 )
 
 func Wrap(str string, color int) string {
@@ -16,8 +16,8 @@ func Wrap(str string, color int) string {
 }
 
 func StripANSI(str string) string {
-	str = strings.ReplaceAll(str, "\033[0m", "")
-	str = reNonANSI.ReplaceAllString(str, "")
+	str = reANSIClose.ReplaceAllString(str, "")
+	str = reANSIOpen.ReplaceAllString(str, "")
 	return str
 }
 

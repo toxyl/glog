@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/toxyl/glog"
@@ -19,6 +20,7 @@ var intLogger *glog.Logger = glog.NewLogger("Int", glog.LightBlue, false, nil)
 var uintLogger *glog.Logger = glog.NewLogger("Uint", glog.Blue, false, nil)
 var floatLogger *glog.Logger = glog.NewLogger("Float", glog.DarkBlue, false, nil)
 var percentageLogger *glog.Logger = glog.NewLogger("Percentage", glog.DarkGreen, false, nil)
+var humanReadableLogger *glog.Logger = glog.NewLoggerSimple("Human Readable")
 var autoLogger *glog.Logger = glog.NewLoggerSimple("Auto")
 var networkLogger *glog.Logger = glog.NewLogger("Network", glog.Green, false, nil)
 var timeLogger *glog.Logger = glog.NewLoggerSimple("Time")
@@ -108,8 +110,114 @@ func demoDataTypes() {
 		glog.Percentage(0.2332, 3),
 	)
 
+	printSection("AUTOMATIC TYPE DETECTION")
 	autoLogger.Default("You can also let glog choose a colorizer based on type: %s", glog.Auto(true, false, 1, -4, 0, 1.23, -73.64, -0.34321, 0.698765, time.Now(), 5*time.Second, "hello", "world"))
 	autoLogger.Default("Normalized float values (from %s to %s) will be shown as percentages (%s).", glog.Float(-1.0, 1), glog.Float(1.0, 1), glog.Auto(-1.0, 1.0))
+
+	printSection("HUMAN READABLE NUMBERS")
+	printSection("Meters:")
+	for v := -30; v <= 30; v++ {
+		humanReadableLogger.Default(
+			"10^%s m -> %s %s",
+			glog.PadRight(glog.Int(v), 3, ' '),
+			glog.PadLeft(glog.HumanReadableSI(math.Pow10(v), "m"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableSI(-math.Pow10(v), "m"), 18, ' '),
+		)
+	}
+
+	printSection("Short Scale (uppercase) vs. Long Scale (lowercase):")
+	for v := 0; v <= 30; v++ {
+		humanReadableLogger.Default(
+			"10^%s | short: %s %s | long: %s %s",
+			glog.PadRight(glog.Int(v), 3, ' '),
+			glog.PadLeft(glog.HumanReadableShort(math.Pow10(v)), 23, ' '),
+			glog.PadLeft(glog.HumanReadableShort(-math.Pow10(v)), 23, ' '),
+			glog.PadLeft(glog.HumanReadableLong(math.Pow10(v)), 23, ' '),
+			glog.PadLeft(glog.HumanReadableLong(-math.Pow10(v)), 23, ' '),
+		)
+	}
+
+	printSection("Data Rate Bytes, IEC vs. SI (base1000):")
+	for v := 0; v <= 10; v++ {
+		dr := math.Pow(1000, float64(v))
+		humanReadableLogger.Default(
+			"1000^%s | IEC: %s %s %s %s | SI: %s %s %s %s",
+			glog.PadRight(glog.Int(v), 3, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesIEC(-dr, "s"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesIEC(dr, "s"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesIEC(dr*60, "m"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesIEC(dr*60*60, "h"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesSI(-dr, "s"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesSI(dr, "s"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesSI(dr*60, "m"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesSI(dr*60*60, "h"), 18, ' '),
+		)
+	}
+
+	printSection("Data Rate Bytes, IEC vs. SI (base1024):")
+	for v := 0; v <= 10; v++ {
+		dr := math.Pow(1024, float64(v))
+		humanReadableLogger.Default(
+			"1024^%s | IEC: %s %s %s %s | SI: %s %s %s %s",
+			glog.PadRight(glog.Int(v), 3, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesIEC(-dr, "s"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesIEC(dr, "s"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesIEC(dr*60, "m"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesIEC(dr*60*60, "h"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesSI(-dr, "s"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesSI(dr, "s"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesSI(dr*60, "m"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateBytesSI(dr*60*60, "h"), 18, ' '),
+		)
+	}
+
+	printSection("Data Rate Requests, IEC vs. SI (base1000):")
+	for v := 0; v <= 10; v++ {
+		humanReadableLogger.Default(
+			"1000^%s | IEC: %s %s | SI: %s %s",
+			glog.PadRight(glog.Int(v), 3, ' '),
+			glog.PadLeft(glog.HumanReadableRateIEC(math.Pow(1000, float64(v)), "Req", "m"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateIEC(-math.Pow(1000, float64(v)), "Req", "m"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateSI(math.Pow(1000, float64(v)), "Req", "m"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateSI(-math.Pow(1000, float64(v)), "Req", "m"), 18, ' '),
+		)
+	}
+
+	printSection("Data Rate Requests, IEC vs. SI (base1024):")
+	for v := 0; v <= 10; v++ {
+		humanReadableLogger.Default(
+			"1024^%s | IEC: %s %s | SI: %s %s",
+			glog.PadRight(glog.Int(v), 3, ' '),
+			glog.PadLeft(glog.HumanReadableRateIEC(math.Pow(1024, float64(v)), "Req", "m"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateIEC(-math.Pow(1024, float64(v)), "Req", "m"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateSI(math.Pow(1024, float64(v)), "Req", "m"), 18, ' '),
+			glog.PadLeft(glog.HumanReadableRateSI(-math.Pow(1024, float64(v)), "Req", "m"), 18, ' '),
+		)
+	}
+
+	printSection("Data Amount, IEC vs. SI (base1000):")
+	for v := 0; v <= 10; v++ {
+		humanReadableLogger.Default(
+			"1000^%s | IEC: %s %s | SI: %s %s",
+			glog.PadRight(glog.Int(v), 3, ' '),
+			glog.PadLeft(glog.HumanReadableBytesIEC(math.Pow(1000, float64(v))), 18, ' '),
+			glog.PadLeft(glog.HumanReadableBytesIEC(-math.Pow(1000, float64(v))), 18, ' '),
+			glog.PadLeft(glog.HumanReadableBytesSI(math.Pow(1000, float64(v))), 18, ' '),
+			glog.PadLeft(glog.HumanReadableBytesSI(-math.Pow(1000, float64(v))), 18, ' '),
+		)
+	}
+
+	printSection("Data Amount, IEC vs. SI (base1024):")
+	for v := 0; v <= 10; v++ {
+		humanReadableLogger.Default(
+			"1024^%s | IEC: %s %s | SI: %s %s",
+			glog.PadRight(glog.Int(v), 3, ' '),
+			glog.PadLeft(glog.HumanReadableBytesIEC(math.Pow(1024, float64(v))), 18, ' '),
+			glog.PadLeft(glog.HumanReadableBytesIEC(-math.Pow(1024, float64(v))), 18, ' '),
+			glog.PadLeft(glog.HumanReadableBytesSI(math.Pow(1024, float64(v))), 18, ' '),
+			glog.PadLeft(glog.HumanReadableBytesSI(-math.Pow(1024, float64(v))), 18, ' '),
+		)
+	}
 }
 
 func demoNetwork() {
@@ -117,6 +225,7 @@ func demoNetwork() {
 
 	networkLogger.EnablePlainLog("network-plain.log")
 	networkLogger.EnableColorLog("network-color.log")
+
 	networkLogger.Default(
 		"These are host:port combinations (with reverse DNS): %s, %s, %s",
 		glog.AddrIPv4Port("8.8.8.8", 80, true),

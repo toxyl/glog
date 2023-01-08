@@ -3,11 +3,12 @@ package glog
 import (
 	"math"
 	"strings"
+	"unicode/utf8"
 )
 
 func getPadLength(str string, maxLength int, char rune) int {
-	l1 := len(str)
-	l2 := len(StripANSI(str))
+	l1 := utf8.RuneCountInString(str)
+	l2 := utf8.RuneCountInString(StripANSI(str))
 	if l1 == l2 {
 		return int(math.Max(0.0, float64(maxLength-l1))) // plain text
 	}
