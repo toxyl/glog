@@ -6,6 +6,11 @@ import (
 )
 
 // Auto will automatically choose a highlighter based on the type of the given `interface{}`s.
+//
+// Related config setting(s):
+//
+//  - `LoggerConfig.AutoFloatPrecision`
+//  - `LoggerConfig.ColorNil`
 func Auto(values ...interface{}) string {
 	res := []string{}
 	for _, i := range values {

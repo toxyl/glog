@@ -5,7 +5,12 @@ import (
 	"strings"
 )
 
-// Uint colors the result cyan (`n` > 0), blue (`n` == 0) or red (`n` < 0).
+// Uint colors the given uints.
+//
+// Related config setting(s):
+//
+//  - `n`  > 0: `LoggerConfig.ColorUintPositive`
+//  - `n` == 0: `LoggerConfig.ColorUintZero`
 func Uint[U Uints](n ...U) string {
 	res := []string{}
 	for _, num := range n {

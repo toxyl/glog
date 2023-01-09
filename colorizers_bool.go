@@ -2,7 +2,12 @@ package glog
 
 import "strings"
 
-// Bool colors the given booleans, it will use `LoggerConfig.ColorBoolFalse` for `false` and `LoggerConfig.ColorBoolTrue` for `true`.
+// Bool colors the given booleans.
+//
+// Related config setting(s):
+//
+//  - `n` == false: `LoggerConfig.ColorBoolFalse`
+//  - `n` == true:  `LoggerConfig.ColorBoolTrue`
 func Bool(b ...bool) string {
 	res := []string{}
 	for _, bo := range b {

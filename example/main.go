@@ -341,8 +341,8 @@ func demoDateTime() {
 	// Here you can find some examples for formats:
 	// https://www.geeksforgeeks.org/how-to-get-current-date-and-time-in-various-format-in-golang/
 
-	printSection("DATE & TIME")
-
+	printSection("DATE, TIME & DURATION")
+	printSection("Duration:")
 	timeLogger.EnablePlainLog("time-plain.log")
 	timeLogger.Default(
 		"The operation took: %s, %s, %s, %s",
@@ -359,30 +359,48 @@ func demoDateTime() {
 		glog.DurationMilliseconds(644),
 	)
 
-	timeLogger.Default(
-		"Current time (12hr): %s",
-		glog.Time12hr(time.Now()),
-	)
-	timeLogger.Default(
-		"Current time (24hr): %s",
-		glog.Time(time.Now()),
-	)
-	timeLogger.Default(
-		"Current Unix time: %s",
-		glog.Timestamp(),
-	)
-	timeLogger.Default(
-		"Today's date: %s",
-		glog.Date(time.Now()),
-	)
-	timeLogger.Default(
-		"Today's full date (12hr): %s",
-		glog.DateTime12hr(time.Now()),
-	)
-	timeLogger.Default(
-		"Today's full date (24hr): %s",
-		glog.DateTime(time.Now()),
-	)
+	printSection("Duration (short):")
+	for _, v := range []float64{
+		glog.SECOND / 100000,
+		glog.SECOND / 10000,
+		glog.SECOND / 1000,
+		glog.SECOND / 10,
+		glog.SECOND,
+		glog.SECOND * 30,
+		glog.MINUTE,
+		glog.MINUTE * 30,
+		glog.HOUR,
+		glog.HOUR * 12,
+		glog.DAY,
+		glog.WEEK,
+		glog.WEEK * 4,
+		glog.MONTH_AVERAGE,
+		glog.YEAR_AVERAGE,
+		glog.YEAR_AVERAGE * 10,
+		glog.YEAR_AVERAGE * 100,
+		glog.YEAR_AVERAGE * 1000,
+	} {
+		timeLogger.Default(
+			"%ss = Average year: %s, Common year: %s, Leap year: %s",
+			glog.PadLeft(glog.Float(v, 4), 24, ' '),
+			glog.PadLeft(glog.DurationShort(v, glog.DURATION_SCALE_AVERAGE), 18, ' '),
+			glog.PadLeft(glog.DurationShort(v, glog.DURATION_SCALE_COMMON), 18, ' '),
+			glog.PadLeft(glog.DurationShort(v, glog.DURATION_SCALE_LEAP), 18, ' '),
+		)
+	}
+
+	printSection("Time:")
+	timeLogger.Default("12hr: %s", glog.Time12hr(time.Now()))
+	timeLogger.Default("24hr: %s", glog.Time(time.Now()))
+	timeLogger.Default("Unix: %s", glog.Timestamp())
+
+	printSection("Date:")
+	timeLogger.Default("Today: %s", glog.Date(time.Now()))
+
+	printSection("Date & Time:")
+	timeLogger.Default("12hr: %s", glog.DateTime12hr(time.Now()))
+	timeLogger.Default("24hr: %s", glog.DateTime(time.Now()))
+
 	timeLogger.DisablePlainLog()
 }
 

@@ -29,6 +29,10 @@ func newPrefix(symbol string, base, exponent int) prefix {
 	return prefix{symbol: symbol, exponent: exponent, value: math.Pow(float64(base), float64(exponent))}
 }
 
+func newPrefixRaw(symbol string, value float64, colorIndex int) prefix {
+	return prefix{symbol: symbol, exponent: colorIndex, value: value}
+}
+
 var siScale prefixScale = prefixScale{
 	prefixes: []prefix{
 		newPrefix("q", 10, -30),
@@ -54,6 +58,69 @@ var siScale prefixScale = prefixScale{
 		newPrefix("R", 10, 27),
 		newPrefix("Q", 10, 30),
 	},
+}
+
+type DurationScale int
+
+const (
+	SECOND        = 1.0
+	MINUTE        = SECOND * 60.0
+	HOUR          = MINUTE * 60.0
+	DAY           = HOUR * 24.0
+	WEEK          = DAY * 7.0
+	YEAR_COMMON   = DAY * 365.0
+	YEAR_LEAP     = DAY * 366.0
+	YEAR_AVERAGE  = (3.0*YEAR_COMMON + YEAR_LEAP) / 4.0
+	MONTH_COMMON  = YEAR_COMMON / 12.0
+	MONTH_LEAP    = YEAR_LEAP / 12.0
+	MONTH_AVERAGE = YEAR_AVERAGE / 12.0
+
+	DURATION_SCALE_AVERAGE = DurationScale(0)
+	DURATION_SCALE_COMMON  = DurationScale(1)
+	DURATION_SCALE_LEAP    = DurationScale(2)
+)
+
+var durationScaleSafe prefixScale = prefixScale{
+	prefixes: []prefix{
+		// let's start easy-peasy with SI units and prefixes
+		newPrefix("qs", 10, -30),
+		newPrefix("rs", 10, -27),
+		newPrefix("ys", 10, -24),
+		newPrefix("zs", 10, -21),
+		newPrefix("as", 10, -18),
+		newPrefix("fs", 10, -15),
+		newPrefix("ps", 10, -12),
+		newPrefix("ns", 10, -9),
+		newPrefix("μs", 10, -6),
+		newPrefix("ms", 10, -3),
+		// now the messy part
+		newPrefixRaw("sec", SECOND, 0),
+		newPrefixRaw("min", MINUTE, 3),
+		newPrefixRaw("hr", HOUR, 6),
+		newPrefixRaw("d", DAY, 9),
+		newPrefixRaw("w", WEEK, 12),
+	},
+}
+
+var durationScaleAverageYear prefixScale = prefixScale{
+	prefixes: append(durationScaleSafe.prefixes,
+		newPrefixRaw("m", MONTH_AVERAGE, 15),
+		newPrefixRaw("y", YEAR_AVERAGE, 18),
+	),
+}
+
+var durationScaleCommonYear prefixScale = prefixScale{
+	prefixes: append(durationScaleSafe.prefixes,
+		newPrefixRaw("m", MONTH_COMMON, 15),
+		newPrefixRaw("y", YEAR_COMMON, 18),
+	),
+}
+
+var durationScaleLeapYear prefixScale = prefixScale{
+	prefixes: append(durationScaleSafe.prefixes,
+		newPrefixRaw("m", MONTH_LEAP, 15),
+		newPrefixRaw("y", YEAR_LEAP, 18),
+	),
 }
 
 var iecScale prefixScale = prefixScale{
@@ -118,4 +185,14 @@ func humanReadableShort[N Number](value N) (float64, int, string) {
 
 func humanReadableLong[N Number](value N) (float64, int, string) {
 	return longScale.process(float64(value), "")
+}
+
+func humanReadableDuration[N Number](seconds N, scale DurationScale) (float64, int, string) {
+	if scale == DURATION_SCALE_AVERAGE {
+		return durationScaleAverageYear.process(float64(seconds), "")
+	}
+	if scale == DURATION_SCALE_COMMON {
+		return durationScaleCommonYear.process(float64(seconds), "")
+	}
+	return durationScaleLeapYear.process(float64(seconds), "")
 }

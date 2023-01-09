@@ -71,6 +71,10 @@ func NewTableColumnCustom(name string, padDirection int, padChar rune, highlight
 	}
 }
 
+//
+// Related config setting(s):
+//
+//  - `LoggerConfig.TablePadChar`
 func NewTableColumn(name string, padDirection int) *TableColumn {
 	return NewTableColumnCustom(name, padDirection, LoggerConfig.TablePadChar, nil)
 }

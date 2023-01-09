@@ -282,6 +282,8 @@ var colorMap map[int]int = map[int]int{
 	239: 255,
 }
 
+// MapColor translates `index` from glog's color table to the corresponding ANSI color index.
+// Glog uses it's own color table to make smooth (automated) color transitions easier to implement.
 func MapColor(index int) int {
 	if index <= 16 {
 		return index

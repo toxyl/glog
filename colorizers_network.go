@@ -39,6 +39,18 @@ func IPs(ips []string, useReverseDNS bool) string {
 	return strings.Join(hs, ", ")
 }
 
+// URL colorizes a URL and marks dead ones (based on a DNS check).
+//
+// Related config setting(s):
+//
+//  - `LoggerConfig.ColorURLSeparators`
+//  - `LoggerConfig.ColorScheme`
+//  - `LoggerConfig.ColorUser`
+//  - `LoggerConfig.ColorPassword`
+//  - `LoggerConfig.ColorURLPath`
+//  - `LoggerConfig.ColorQueryKey`
+//  - `LoggerConfig.ColorQueryValue`
+//  - `LoggerConfig.ColorFragment`
 func URL(raw ...string) string {
 	out := []string{}
 	for _, r := range raw {

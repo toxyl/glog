@@ -13,47 +13,83 @@ func Highlight(message ...string) string {
 	return strings.Join(res, ", ")
 }
 
-// HighlightInfo colorizes the `message` using `LoggerConfig.ColorIndicatorInfo`.
+// HighlightInfo colorizes the `message`.
+//
+// Related config setting(s):
+//
+//  - `LoggerConfig.ColorIndicatorInfo`
 func HighlightInfo(message string) string {
 	return Wrap(message, LoggerConfig.ColorIndicatorInfo)
 }
 
-// HighlightOK colorizes the `message` using `LoggerConfig.ColorIndicatorOK`.
+// HighlightOK colorizes the `message`.
+//
+// Related config setting(s):
+//
+//  - `LoggerConfig.ColorIndicatorOK`
 func HighlightOK(message string) string {
 	return Wrap(message, LoggerConfig.ColorIndicatorOK)
 }
 
-// HighlightSuccess colorizes the `message` using `LoggerConfig.ColorIndicatorSuccess`.
+// HighlightSuccess colorizes the `message`.
+//
+// Related config setting(s):
+//
+//  - `LoggerConfig.ColorIndicatorSuccess`
 func HighlightSuccess(message string) string {
 	return Wrap(message, LoggerConfig.ColorIndicatorSuccess)
 }
 
-// HighlightNotOK colorizes the `message` using `LoggerConfig.ColorIndicatorNotOK`.
+// HighlightNotOK colorizes the `message`.
+//
+// Related config setting(s):
+//
+//  - `LoggerConfig.ColorIndicatorNotOK`
 func HighlightNotOK(message string) string {
 	return Wrap(message, LoggerConfig.ColorIndicatorNotOK)
 }
 
-// HighlightError colorizes the `message` using `LoggerConfig.ColorIndicatorError`.
+// HighlightError colorizes the `message`.
+//
+// Related config setting(s):
+//
+//  - `LoggerConfig.ColorIndicatorError`
 func HighlightError(message string) string {
 	return Wrap(message, LoggerConfig.ColorIndicatorError)
 }
 
-// HighlightWarning colorizes the `message` using `LoggerConfig.ColorIndicatorWarning`.
+// HighlightWarning colorizes the `message`.
+//
+// Related config setting(s):
+//
+//  - `LoggerConfig.ColorIndicatorWarning`
 func HighlightWarning(message string) string {
 	return Wrap(message, LoggerConfig.ColorIndicatorWarning)
 }
 
-// HighlightDebug colorizes the `message` using `LoggerConfig.ColorIndicatorDebug`.
+// HighlightDebug colorizes the `message`.
+//
+// Related config setting(s):
+//
+//  - `LoggerConfig.ColorIndicatorDebug`
 func HighlightDebug(message string) string {
 	return Wrap(message, LoggerConfig.ColorIndicatorDebug)
 }
 
-// HighlightQuestion colorizes the `message` using `LoggerConfig.ColorIndicatorQuestion`.
+// HighlightQuestion colorizes the `message`.
+//
+// Related config setting(s):
+//
+//  - `LoggerConfig.ColorIndicatorQuestion`
 func HighlightQuestion(message string) string {
 	return Wrap(message, LoggerConfig.ColorIndicatorQuestion)
 }
 
-// HighlightTrace colorizes the `message` using `LoggerConfig.ColorIndicatorTrace`.
+// HighlightTrace colorizes the `message`.
+//
+// Related config setting(s):
+//
+//  - `LoggerConfig.ColorIndicatorTrace`
 func HighlightTrace(message string) string {
 	return Wrap(message, LoggerConfig.ColorIndicatorTrace)
 }

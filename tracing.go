@@ -15,6 +15,10 @@ type TraceLine struct {
 	Logger   *Logger
 }
 
+//
+// Related config setting(s):
+//
+//  - `LoggerConfig.ColorIndicatorDebug`
 func (tl *TraceLine) Print(i, l, level, maxLenFunction, maxLenPath, maxLenLine int) {
 	d := int(tl.Index - tl.Depth)
 	pad := ""
