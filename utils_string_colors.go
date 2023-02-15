@@ -2,8 +2,6 @@ package glog
 
 import (
 	"sync"
-
-	"github.com/toxyl/gutils"
 )
 
 type StringColorCache struct {
@@ -25,7 +23,7 @@ func (scc *StringColorCache) Get(str string) int {
 		return v
 	}
 	pt := 0.0
-	bm := []rune(gutils.RemoveNonPrintable(str))
+	bm := []rune(RemoveNonPrintable(str))
 	l := len(bm)
 	for i := 0; i < l; i++ {
 		pt += (Max(0.0, Min(94.0, float64(bm[i])-32.0)) / 94.0) / float64(l)

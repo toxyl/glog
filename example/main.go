@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/toxyl/glog"
-	"github.com/toxyl/gutils"
 )
 
 var appLogger *glog.Logger = glog.NewLogger("", glog.Pink, false, nil)
@@ -56,7 +55,7 @@ func fnA() {
 
 func sleep() {
 	// appLogger.Default("Sleeping a bit...")
-	gutils.RandomSleep(100, 3000, time.Millisecond)
+	glog.RandomSleep(100, 3000, time.Millisecond)
 }
 
 func printSection(title string) {

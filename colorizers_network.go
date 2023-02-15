@@ -5,8 +5,6 @@ import (
 	"net"
 	"net/url"
 	"strings"
-
-	"github.com/toxyl/gutils"
 )
 
 func AddrIPv4Port[I IntOrUint](ip string, port I, useReverseDNS bool) string {
@@ -15,7 +13,7 @@ func AddrIPv4Port[I IntOrUint](ip string, port I, useReverseDNS bool) string {
 }
 
 func Addr(addrIPv4Port string, useReverseDNS bool) string {
-	h, p := gutils.SplitHostPort(addrIPv4Port)
+	h, p := SplitHostPort(addrIPv4Port)
 	return AddrIPv4Port(h, p, useReverseDNS)
 }
 
