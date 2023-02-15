@@ -429,6 +429,52 @@ func demoTables() {
 	)
 }
 
+var (
+	errTestGo  = fmt.Errorf("test error")
+	errTestGo2 = fmt.Errorf("test error 2")
+	testErrors = glog.NewGErrorRegistry().Append(
+		glog.NewGError(errTestGo, false, 0),
+		glog.NewGError(errTestGo2, true, 20),
+	).Register(
+		fmt.Errorf("this is not fatal"),
+		false,
+		0,
+	)
+)
+
+func somewhatShorterFunctionName() {
+	testErrors.Check(errTestGo2, "should DIE! (fatal)")
+}
+
+func horriblyLongFunctionNameForTesting() {
+	testErrors.Check(errTestGo, "should not die (non-fatal)")
+	somewhatShorterFunctionName()
+}
+
+func demoErrorHandling() {
+	printSection("ERROR HANDLING")
+	testErrors.Check(errTestGo, "should not die (non-fatal)")
+	testErrors.Check(fmt.Errorf("test error"), "should not die (non-fatal)")
+	testErrors.Check(fmt.Errorf("some other: test error"), "should not die (non-fatal)")
+	testErrors.Check(fmt.Errorf("test error: more errors ..."), "should not die (non-fatal)")
+	testErrors.Check(fmt.Errorf("it can be somewhere: test error: in the chain"), "should not die (non-fatal)")
+	testErrors.Check(fmt.Errorf("this is not fatal"), "should not die (non-fatal)")
+	testErrors.Check(errTestGo, "should not die (non-fatal)")
+	printSection("")
+}
+
+func demoFatalErrorHandling() {
+	printSection("FATAL ERROR HANDLING")
+	fn := func() {
+		testErrors.Check(errTestGo, "should not die (non-fatal)")
+		fn := func() {
+			horriblyLongFunctionNameForTesting()
+		}
+		fn()
+	}
+	fn()
+}
+
 func main() {
 	appLogger.Success("App booted, let's show you the demo then!")
 
@@ -453,9 +499,14 @@ func main() {
 	demoTables()
 	sleep()
 
+	demoErrorHandling()
+	sleep()
+
 	appLogger.Success(
 		"App was %s seconds (%s milliseconds) active",
 		glog.Runtime(),
 		glog.RuntimeMilliseconds(),
 	)
+
+	demoFatalErrorHandling()
 }
