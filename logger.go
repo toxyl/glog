@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"runtime"
 	"sort"
-	"strings"
 	"time"
 )
 
@@ -169,38 +167,10 @@ func (l *Logger) Question(format string, a ...interface{}) {
 }
 
 func (l *Logger) Trace(level uint) {
-	// debugging function to spit out current file, line number and function name
-	// see https://stackoverflow.com/a/46289376/55504
 	if !l.traceMode || level > l.traceLevel {
 		return
 	}
-	depth := 2
-	maxDepth := 22
-	pcCaller1 := make([]uintptr, maxDepth+depth)
-	nCaller1 := runtime.Callers(int(depth), pcCaller1)
-	ml := int(Min(len(pcCaller1), Min(nCaller1, int(maxDepth))))
-
-	maxFuncLen, maxPathLen, maxLineLen := 0, 0, 0
-	lines := []*TraceLine{}
-
-	for i := int(depth); i < ml; i++ {
-		frames := runtime.CallersFrames(pcCaller1[i-2 : i-1])
-		frameCaller, _ := frames.Next()
-		fullPathFuncCaller := strings.Split(frameCaller.Function, "/")
-		fnName := fullPathFuncCaller[len(fullPathFuncCaller)-1]
-		fnFile := frameCaller.File
-		fnLine := frameCaller.Line
-
-		lines = append(lines, NewTraceLine(l, i, int(depth), ml, fnName, fnFile, fnLine))
-
-		maxFuncLen = Max(maxFuncLen, len(fnName))
-		maxPathLen = Max(maxPathLen, len(fnFile))
-		maxLineLen = Max(maxLineLen, len(fmt.Sprint(fnLine)))
-	}
-
-	for i, tl := range lines {
-		tl.Print(i, len(lines), int(level), maxFuncLen, maxPathLen, maxLineLen)
-	}
+	stackTracer.Sample(0).PrintWithLogger(l, 't')
 }
 
 func (l *Logger) ShowColors() {

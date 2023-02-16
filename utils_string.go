@@ -12,8 +12,32 @@ var (
 	reANSIOpen  = regexp.MustCompile(`\033\[38;5;\d+m`)
 )
 
+func Reset() string {
+	return "\033[0m"
+}
+
+func Color(color int) string {
+	return fmt.Sprintf("\033[38;5;%dm", MapColor(color))
+}
+
 func Wrap(str string, color int) string {
-	return fmt.Sprintf("\033[38;5;%dm%s\033[0m", MapColor(color), str)
+	return Color(color) + str + Reset()
+}
+
+func Bold() string {
+	return "\033[1m"
+}
+
+func Italic() string {
+	return "\033[3m"
+}
+
+func Underline() string {
+	return "\033[4m"
+}
+
+func StrikeThrough() string {
+	return "\033[9m"
 }
 
 func StripANSI(str string) string {
