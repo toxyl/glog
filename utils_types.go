@@ -5,7 +5,7 @@ type Ints interface {
 }
 
 type IntOrInterface interface {
-	Ints | interface{}
+	int64 | int32 | int16 | int8 | int | interface{}
 }
 
 type Uints interface {
@@ -13,11 +13,11 @@ type Uints interface {
 }
 
 type UintOrInterface interface {
-	Uints | interface{}
+	uint64 | uint32 | uint16 | uint8 | uint | interface{}
 }
 
 type IntOrUint interface {
-	Ints | Uints
+	int64 | int32 | int16 | int8 | int | uint64 | uint32 | uint16 | uint8 | uint
 }
 
 type Floats interface {
@@ -25,17 +25,17 @@ type Floats interface {
 }
 
 type FloatOrInterface interface {
-	Floats | interface{}
+	float32 | float64 | interface{}
 }
 
 type Number interface {
-	IntOrUint | Floats
+	int64 | int32 | int16 | int8 | int | uint64 | uint32 | uint16 | uint8 | uint | float32 | float64
 }
 
 type NumberOrInterface interface {
-	Number | interface{}
+	int64 | int32 | int16 | int8 | int | uint64 | uint32 | uint16 | uint8 | uint | float32 | float64 | interface{}
 }
 
 type Durations interface {
-	uint32 | uint64 | uint | int32 | int64 | int | Floats
+	uint32 | uint64 | uint | int32 | int64 | int | float32 | float64
 }
