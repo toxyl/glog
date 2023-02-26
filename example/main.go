@@ -23,6 +23,7 @@ var humanReadableLogger *glog.Logger = glog.NewLoggerSimple("Human Readable")
 var autoLogger *glog.Logger = glog.NewLoggerSimple("Auto")
 var networkLogger *glog.Logger = glog.NewLogger("Network", glog.Green, false, nil)
 var timeLogger *glog.Logger = glog.NewLoggerSimple("Time")
+var progressLogger *glog.Logger = glog.NewLoggerSimple("Progress")
 var tableLogger *glog.Logger = glog.NewLogger("Tables", glog.MediumGray, false, nil)
 var miscLogger *glog.Logger = glog.NewLogger("Misc", -1, false, func(msg string) {
 	fmt.Print("With    colors: " + msg)                 // we just echo what we get
@@ -327,6 +328,16 @@ func demoMisc() {
 	traceLogger.EnableTrace(3)
 	fnA()
 	traceLogger.DisableTrace()
+
+	printSection("PROGRESS BARS")
+	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
+	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
+	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
+	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
+	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
+	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
+	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
+	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
 	appLogger.Default("")
 }
 
@@ -411,7 +422,7 @@ func demoColors() {
 func demoTables() {
 	printSection("TABLES")
 	tableLogger.Table(
-		glog.NewTableColumnLeft("Left").Push(10, []interface{}{"hello world", nil, 2, []string{"nesting", "works", "too"}, 0.30}, nil, -85, 80, 0.001),
+		glog.NewTableColumnLeft("Left").Push(10, []interface{}{"hello world", nil, 2, []string{"nesting", "works", "too"}, 0.30}, nil, -85, 80, 0.001, "https://www.google.com", "http://some.unsafe.place-to-not-go.to", "localhost", "/a/file/path"),
 		glog.NewTableColumnCenter("Center").Push(false, "my little pony", 50, 60, time.Now(), 90),
 		glog.NewTableColumnRight("Right").Push(10, 20, true, []int{40, 50}, 60, 10*time.Second, "care to log in?", 100),
 		glog.NewTableColumnCenterCustom("Pad Char", '∙', nil).Push(-10, []interface{}{0, 5, 1.4, "test"}, 30.0/2.9, nil, false, "so long and", "thanks for all", "the fish", time.Now(), 90, 100),

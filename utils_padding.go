@@ -1,30 +1,23 @@
 package glog
 
 import (
-	"math"
 	"strings"
-	"unicode/utf8"
 )
 
-func getPadLength(str string, maxLength int, char rune) int {
-	l1 := utf8.RuneCountInString(str)
-	l2 := utf8.RuneCountInString(StripANSI(str))
-	if l1 == l2 {
-		return int(math.Max(0.0, float64(maxLength-l1))) // plain text
-	}
-	return int(math.Max(0.0, float64(maxLength-l2))) // string with ANSI escapes
+func getPadLength(str string, maxLength int) int {
+	return Max(0, maxLength-plaintextStringLengthForPadding(str))
 }
 
 func PadLeft[I IntOrUint](str string, maxLength I, char rune) string {
-	return strings.Repeat(string(char), getPadLength(str, int(maxLength), char)) + str
+	return strings.Repeat(string(char), getPadLength(str, int(maxLength))) + str
 }
 
 func PadRight[I IntOrUint](str string, maxLength I, char rune) string {
-	return str + strings.Repeat(string(char), getPadLength(str, int(maxLength), char))
+	return str + strings.Repeat(string(char), getPadLength(str, int(maxLength)))
 }
 
 func PadCenter[I IntOrUint](str string, maxLength I, char rune) string {
-	padLen := getPadLength(str, int(maxLength), char)
+	padLen := getPadLength(str, int(maxLength))
 	pl, pr := 0, 0
 	if padLen%2 != 0 {
 		// uneven length, let's pad one more on the right

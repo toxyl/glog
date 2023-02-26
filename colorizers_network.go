@@ -26,7 +26,7 @@ func ConnLocal(conn net.Conn, useReverseDNS bool) string {
 }
 
 func Port[I IntOrUint](port I) string {
-	return Wrap(fmt.Sprint(port), int(16.0+215.0*(float64(port)/65535.0))) // 16 - 231 (215 total)
+	return Wrap(fmt.Sprint(port), int(32.0+Max(0.0, Min(183.0, 183.0*(float64(port)/65535.0)))))
 }
 
 func IPs(ips []string, useReverseDNS bool) string {
@@ -41,14 +41,14 @@ func IPs(ips []string, useReverseDNS bool) string {
 //
 // Related config setting(s):
 //
-//  - `LoggerConfig.ColorURLSeparators`
-//  - `LoggerConfig.ColorScheme`
-//  - `LoggerConfig.ColorUser`
-//  - `LoggerConfig.ColorPassword`
-//  - `LoggerConfig.ColorURLPath`
-//  - `LoggerConfig.ColorQueryKey`
-//  - `LoggerConfig.ColorQueryValue`
-//  - `LoggerConfig.ColorFragment`
+//   - `LoggerConfig.ColorURLSeparators`
+//   - `LoggerConfig.ColorScheme`
+//   - `LoggerConfig.ColorUser`
+//   - `LoggerConfig.ColorPassword`
+//   - `LoggerConfig.ColorURLPath`
+//   - `LoggerConfig.ColorQueryKey`
+//   - `LoggerConfig.ColorQueryValue`
+//   - `LoggerConfig.ColorFragment`
 func URL(raw ...string) string {
 	out := []string{}
 	for _, r := range raw {
@@ -69,7 +69,7 @@ func URL(raw ...string) string {
 		}
 		ips, _ := net.LookupIP(u.Host)
 		if len(ips) > 0 {
-			res += Wrap(u.Host, getIPColor(ips[0].String()))
+			res += Wrap(u.Host, getIPColor(ips[0].To4().String()))
 		} else {
 			isAlive = false
 			res += WrapRed(u.Host)
@@ -116,7 +116,7 @@ func URL(raw ...string) string {
 			res += Wrap("#", LoggerConfig.ColorURLSeparators) + Wrap(u.Fragment, LoggerConfig.ColorFragment)
 		}
 		if !isAlive {
-			res = WrapRed("(dead domain: ") + res + WrapRed(")")
+			res = WrapRed("💀 ") + res
 		}
 		out = append(out, res)
 	}

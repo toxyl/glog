@@ -79,7 +79,7 @@ func NewDefaultConfig() *Config {
 		ColorScheme:             DarkYellow,
 		ColorUser:               DarkGreen,
 		ColorPassword:           DarkRed,
-		ColorURLPath:            MediumGray,
+		ColorURLPath:            128,
 		ColorPath:               148,
 		ColorQueryKey:           Orange,
 		ColorQueryValue:         DarkOrange,

@@ -11,13 +11,15 @@ func getIPColor(ip string) int {
 	if v, ok := ipColorCache[ip]; ok {
 		return v
 	}
+
 	parts := strings.Split(ip, ".")
 	pt := 0.0
+	pl := float64(len(parts))
 	for _, p := range parts {
 		f, _ := GetFloat(p)
-		pt += f
+		pt += f / pl
 	}
-	ipColorCache[ip] = int(16.0 + 215.0*(pt/4.0/255.0)) // 16 - 231 (215 total)
+	ipColorCache[ip] = int(32.0 + Max(0.0, Min(185.0, 185.0*(pt/255.0))))
 	return ipColorCache[ip]
 }
 

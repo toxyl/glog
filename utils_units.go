@@ -43,7 +43,7 @@ var siScale prefixScale = prefixScale{
 		newPrefix("f", 10, -15),
 		newPrefix("p", 10, -12),
 		newPrefix("n", 10, -9),
-		newPrefix("μ", 10, -6),
+		newPrefix("µ", 10, -6),
 		newPrefix("m", 10, -3),
 		newPrefix("c", 10, -2),
 		newPrefix(" ", 10, 0),
@@ -91,7 +91,7 @@ var durationScaleSafe prefixScale = prefixScale{
 		newPrefix("fs", 10, -15),
 		newPrefix("ps", 10, -12),
 		newPrefix("ns", 10, -9),
-		newPrefix("μs", 10, -6),
+		newPrefix("µs", 10, -6),
 		newPrefix("ms", 10, -3),
 		// now the messy part
 		newPrefixRaw("sec", SECOND, 0),

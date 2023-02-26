@@ -9,8 +9,8 @@ import (
 //
 // Related config setting(s):
 //
-//  - `LoggerConfig.AutoFloatPrecision`
-//  - `LoggerConfig.ColorNil`
+//   - `LoggerConfig.AutoFloatPrecision`
+//   - `LoggerConfig.ColorNil`
 func Auto(values ...interface{}) string {
 	res := []string{}
 	for _, i := range values {
@@ -94,7 +94,16 @@ func Auto(values ...interface{}) string {
 		}
 
 		if ok, v := castString(i); ok {
-			res = append(res, Highlight(v))
+			// maybe it's a path
+			switch identifyPath(v) {
+			case INVALID_PATH:
+				v = Highlight(v)
+			case FILE_PATH:
+				v = File(v)
+			case URL_PATH:
+				v = URL(v)
+			}
+			res = append(res, v)
 			continue
 		}
 
