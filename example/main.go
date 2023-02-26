@@ -55,8 +55,18 @@ func fnA() {
 }
 
 func sleep() {
-	// appLogger.Default("Sleeping a bit...")
-	glog.RandomSleep(100, 3000, time.Millisecond)
+	appLogger.Default("Sleeping a bit...")
+	i := 0
+	n := glog.GetRandomInt(1, 30)
+	for i = 0; i < n; i++ {
+		appLogger.Progress(float64(i)/float64(n), "done waiting...")
+		time.Sleep(100 * time.Millisecond)
+	}
+	if n%2 == 0 {
+		appLogger.ProgressSuccess(float64(i)/float64(n), "Done!")
+		return
+	}
+	appLogger.ProgressError(float64(i)/float64(n), "Failed!")
 }
 
 func printSection(title string) {

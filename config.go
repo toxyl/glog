@@ -49,6 +49,7 @@ type Config struct {
 	ColorIndicatorWarning,
 	ColorIndicatorDebug,
 	ColorIndicatorTrace,
+	ColorIndicatorProgress,
 	ColorIndicatorQuestion int
 	ColorsDisabled,
 	ShowRuntimeSeconds,
@@ -56,9 +57,10 @@ type Config struct {
 	ShowDateTime,
 	ShowSubsystem,
 	ShowIndicator bool
-	Indicators      map[rune]*Indicator
-	reverseDNSCache map[string]string
-	createdAt       time.Time
+	ProgressBarWidth int
+	Indicators       map[rune]*Indicator
+	reverseDNSCache  map[string]string
+	createdAt        time.Time
 }
 
 func (c *Config) AddIndicator(indicator rune, value string, color int) {
@@ -113,6 +115,7 @@ func NewDefaultConfig() *Config {
 		ColorIndicatorWarning:   Yellow,
 		ColorIndicatorDebug:     Orange,
 		ColorIndicatorTrace:     Orange,
+		ColorIndicatorProgress:  LightBlue,
 		ColorIndicatorQuestion:  Lime,
 		ColorsDisabled:          false,
 		ShowRuntimeSeconds:      false,
@@ -120,6 +123,7 @@ func NewDefaultConfig() *Config {
 		ShowDateTime:            true,
 		ShowSubsystem:           true,
 		ShowIndicator:           true,
+		ProgressBarWidth:        20,
 		Indicators:              map[rune]*Indicator{},
 		reverseDNSCache:         map[string]string{},
 		createdAt:               time.Now(),
@@ -135,6 +139,7 @@ func NewDefaultConfig() *Config {
 	c.AddIndicator('d', "[D]", c.ColorIndicatorDebug)
 	c.AddIndicator('?', "[?]", c.ColorIndicatorQuestion)
 	c.AddIndicator('t', "[T]", c.ColorIndicatorTrace)
+	c.AddIndicator('p', "[∞]", c.ColorIndicatorProgress)
 
 	return c
 }
