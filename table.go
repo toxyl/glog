@@ -71,10 +71,9 @@ func NewTableColumnCustom(name string, padDirection int, padChar rune, highlight
 	}
 }
 
-//
 // Related config setting(s):
 //
-//  - `LoggerConfig.TablePadChar`
+//   - `LoggerConfig.TablePadChar`
 func NewTableColumn(name string, padDirection int) *TableColumn {
 	return NewTableColumnCustom(name, padDirection, LoggerConfig.TablePadChar, nil)
 }
@@ -108,13 +107,33 @@ type Table struct {
 }
 
 func (at *Table) Rows() []string {
+	const (
+		NO_VAL    = ""
+		CSEP      = "---"
+		HCONN     = "─"
+		HCONN_B   = "┬"
+		HCONN_T   = "┴"
+		HCONN_C   = "┼"
+		VCONN     = "│"
+		VCONN_R   = "├"
+		VCONN_L   = "┤"
+		VCONN_C   = "┼"
+		CONN_TL   = "┌"
+		CONN_TR   = "┐"
+		CONN_BL   = "└"
+		CONN_BR   = "┘"
+		SPACE     = " "
+		CTYPE_SEP = iota
+		CTYPE_VAL
+		CTYPE_NO_VAL
+	)
 	ls := len(at.series)
 	topRow := make([]string, ls)
 	headers := make([]string, ls)
 	rows := [][]string{} // rows - columns
 	for col, series := range at.series {
 		headers[col] = series.header()
-		topRow[col] = strings.Repeat("─", series.maxLen)
+		topRow[col] = strings.Repeat(HCONN, series.maxLen)
 		for row, v := range series.padValues().values {
 			if len(rows) < row+1 {
 				rows = append(rows, make([]string, ls))
@@ -122,29 +141,95 @@ func (at *Table) Rows() []string {
 			rows[row][col] = v
 		}
 	}
-	res := []string{
-		"┌─" + strings.Join(topRow, "─┬─") + "─┐",
-		"│ " + strings.Join(headers, " │ ") + " │",
-		"├─" + strings.Join(topRow, "─┼─") + "─┤",
+	fnColType := func(col, cutset string) int {
+		switch strings.Trim(strings.TrimSpace(StripANSI(col)), cutset) {
+		case NO_VAL:
+			return CTYPE_NO_VAL
+		case CSEP:
+			return CTYPE_SEP
+		}
+		return CTYPE_VAL
 	}
-	for _, r := range rows {
-		for i, _ := range r {
-			if r[i] == "" {
-				if at.series[i].padDir == PAD_LEFT {
-					r[i] = PadLeft(Auto("N/A"), at.series[i].maxLen, at.series[i].padChar)
 
-				} else if at.series[i].padDir == PAD_CENTER {
-					r[i] = PadCenter(Auto("N/A"), at.series[i].maxLen, at.series[i].padChar)
-
-				} else if at.series[i].padDir == PAD_RIGHT {
-					r[i] = PadRight(Auto("N/A"), at.series[i].maxLen, at.series[i].padChar)
-
+	res := []string{
+		CONN_TL + HCONN + strings.Join(topRow, HCONN+HCONN_B+HCONN) + HCONN + CONN_TR,
+		VCONN + SPACE + strings.Join(headers, SPACE+VCONN+SPACE) + SPACE + VCONN,
+		VCONN_R + HCONN + strings.Join(topRow, HCONN+HCONN_C+HCONN) + HCONN + VCONN_L,
+	}
+	for _, row := range rows {
+		colTypes := make([]int, len(row))
+		for colIdx, col := range row {
+			colTypes[colIdx] = fnColType(col, string(at.series[colIdx].padChar))
+			switch colTypes[colIdx] {
+			case CTYPE_NO_VAL:
+				if at.series[colIdx].padDir == PAD_LEFT {
+					row[colIdx] = PadLeft(Auto("N/A"), at.series[colIdx].maxLen, at.series[colIdx].padChar)
+				} else if at.series[colIdx].padDir == PAD_CENTER {
+					row[colIdx] = PadCenter(Auto("N/A"), at.series[colIdx].maxLen, at.series[colIdx].padChar)
+				} else if at.series[colIdx].padDir == PAD_RIGHT {
+					row[colIdx] = PadRight(Auto("N/A"), at.series[colIdx].maxLen, at.series[colIdx].padChar)
 				}
+			case CTYPE_SEP:
+				row[colIdx] = PadLeft("", at.series[colIdx].maxLen, '─')
 			}
 		}
-		res = append(res, "│ "+strings.Join(r, " │ ")+" │")
+
+		rowStr := ""
+		for colIdx, col := range row {
+			currType := colTypes[colIdx]
+
+			// start of row
+			if colIdx == 0 {
+				switch currType {
+				case CTYPE_SEP:
+					rowStr = VCONN_R + HCONN + col + HCONN
+				default:
+					rowStr = VCONN + SPACE + col + SPACE
+				}
+				continue
+			}
+
+			prevType := colTypes[colIdx-1]
+
+			// end of row
+			if colIdx == len(row)-1 {
+				if prevType == CTYPE_SEP {
+					if currType == CTYPE_SEP {
+						rowStr += VCONN_C + HCONN + col + HCONN + VCONN_L
+					} else {
+						rowStr += VCONN_L + SPACE + col + SPACE + VCONN
+					}
+					continue
+				}
+
+				if currType == CTYPE_SEP {
+					rowStr += VCONN_R + HCONN + col + HCONN + VCONN_L
+				} else {
+					rowStr += VCONN + SPACE + col + SPACE + VCONN
+				}
+				continue
+			}
+
+			// somewhere in the middle
+			if prevType == CTYPE_SEP {
+				if currType == CTYPE_SEP {
+					rowStr += VCONN_C + HCONN + col + HCONN
+				} else {
+					rowStr += VCONN_L + SPACE + col + SPACE
+				}
+				continue
+			}
+
+			if currType == CTYPE_SEP {
+				rowStr += VCONN_R + HCONN + col + HCONN
+			} else {
+				rowStr += VCONN + SPACE + col + SPACE
+			}
+		}
+
+		res = append(res, rowStr)
 	}
-	res = append(res, "└─"+strings.Join(topRow, "─┴─")+"─┘")
+	res = append(res, CONN_BL+HCONN+strings.Join(topRow, HCONN+HCONN_T+HCONN)+HCONN+CONN_BR)
 	return res
 }
 
