@@ -432,7 +432,7 @@ func demoColors() {
 func demoTables() {
 	printSection("TABLES")
 	tableLogger.Table(
-		glog.NewTableColumnLeft("Left").Push(10, "---", []interface{}{"hello world", nil, 2, []string{"nesting", "works", "too"}, 0.30}, nil, -85, 80, 0.001, "https://www.google.com", "http://some.unsafe.place-to-not-go.to", "localhost", "/a/file/path"),
+		glog.NewTableColumnLeft("Left").Push(10, "---", []interface{}{"hello world", nil, 2, []string{"nesting", "works", "too"}, 0.30}, " ", nil, -85, 80, 0.001, "https://www.google.com", "http://some.unsafe.place-to-not-go.to", "localhost", "/a/file/path"),
 		glog.NewTableColumnCenter("Center").Push(false, "my little pony", 50, 60, time.Now(), 90, "---"),
 		glog.NewTableColumnRight("Right").Push(10, 20, true, []int{40, 50}, 60, 10*time.Second, "---", "care to log in?", 100),
 		glog.NewTableColumnCenterCustom("Pad Char", '∙', nil).Push(-10, []interface{}{0, 5, 1.4, "test"}, "---", 30.0/2.9, nil, false, "so long and", "thanks for all", "the fish", time.Now(), 90, 100),

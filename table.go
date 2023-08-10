@@ -142,7 +142,7 @@ func (at *Table) Rows() []string {
 		}
 	}
 	fnColType := func(col, cutset string) int {
-		switch strings.Trim(strings.TrimSpace(StripANSI(col)), cutset) {
+		switch strings.Trim(StripANSI(col), cutset) {
 		case NO_VAL:
 			return CTYPE_NO_VAL
 		case CSEP:
@@ -162,12 +162,14 @@ func (at *Table) Rows() []string {
 			colTypes[colIdx] = fnColType(col, string(at.series[colIdx].padChar))
 			switch colTypes[colIdx] {
 			case CTYPE_NO_VAL:
-				if at.series[colIdx].padDir == PAD_LEFT {
-					row[colIdx] = PadLeft(Auto("N/A"), at.series[colIdx].maxLen, at.series[colIdx].padChar)
-				} else if at.series[colIdx].padDir == PAD_CENTER {
-					row[colIdx] = PadCenter(Auto("N/A"), at.series[colIdx].maxLen, at.series[colIdx].padChar)
-				} else if at.series[colIdx].padDir == PAD_RIGHT {
-					row[colIdx] = PadRight(Auto("N/A"), at.series[colIdx].maxLen, at.series[colIdx].padChar)
+				if len(col) == 0 {
+					if at.series[colIdx].padDir == PAD_LEFT {
+						row[colIdx] = PadLeft(Auto("N/A"), at.series[colIdx].maxLen, at.series[colIdx].padChar)
+					} else if at.series[colIdx].padDir == PAD_CENTER {
+						row[colIdx] = PadCenter(Auto("N/A"), at.series[colIdx].maxLen, at.series[colIdx].padChar)
+					} else if at.series[colIdx].padDir == PAD_RIGHT {
+						row[colIdx] = PadRight(Auto("N/A"), at.series[colIdx].maxLen, at.series[colIdx].padChar)
+					}
 				}
 			case CTYPE_SEP:
 				row[colIdx] = PadLeft("", at.series[colIdx].maxLen, '─')
