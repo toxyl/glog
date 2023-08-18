@@ -143,13 +143,13 @@ func (at *Table) RawData() [][]interface{} {
 		onlySeparators := true
 		for _, col := range at.series {
 			v := col.valuesRaw[i]
-			if v == "---" {
-				v = "" // strip separators as they are only used for visual representation
-			} else {
-				onlySeparators = false
-			}
 			if str, ok := v.(string); ok {
-				v = StripANSI(str) // try to strip ANSI from strings
+				v = strings.TrimSpace(StripANSI(str))
+				if v == "---" {
+					v = "" // strip separators as they are only used for visual representation
+				} else if v != "" {
+					onlySeparators = false
+				}
 			}
 			row = append(row, v)
 		}
