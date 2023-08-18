@@ -20,10 +20,9 @@ type GError struct {
 	exitCode     int
 }
 
-//
 // Related config setting(s):
 //
-//  - `LoggerConfig.ColorIndicatorDebug`
+//   - `LoggerConfig.ColorIndicatorDebug`
 func (ge *GError) printStackTrace(maxLevel int, logger *Logger) {
 	stackTracer.Sample(maxLevel).PrintWithLogger(logger, 'x')
 }
@@ -63,9 +62,7 @@ type GErrorRegistry struct {
 }
 
 func (ger *GErrorRegistry) Append(errors ...*GError) *GErrorRegistry {
-	for _, ge := range errors {
-		ger.registeredErrors = append(ger.registeredErrors, ge)
-	}
+	ger.registeredErrors = append(ger.registeredErrors, errors...)
 	return ger
 }
 

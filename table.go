@@ -1,7 +1,11 @@
 package glog
 
 import (
+	"encoding/json"
+	"fmt"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 )
 
 const (
@@ -13,6 +17,7 @@ const (
 type TableColumn struct {
 	Name        string
 	values      []string
+	valuesRaw   []interface{}
 	maxLen      int
 	padDir      int
 	padChar     rune
@@ -24,6 +29,7 @@ func (t *TableColumn) Push(value ...interface{}) *TableColumn {
 		vs := t.fnHighlight(v)
 		vl := len(StripANSI(vs))
 		t.values = append(t.values, vs)
+		t.valuesRaw = append(t.valuesRaw, v)
 		t.maxLen = Max(t.maxLen, vl)
 	}
 	return t
@@ -104,6 +110,83 @@ func NewTableColumnCenter(name string) *TableColumn {
 
 type Table struct {
 	series []*TableColumn
+}
+
+func (at *Table) RawData() [][]interface{} {
+	// columns might have different row amounts,
+	// let's find the maximum number of rows in a column
+	numRows := 0
+	for _, col := range at.series {
+		numRows = Max(numRows, len(col.valuesRaw))
+	}
+
+	// now we pad every column with
+	// less rows than the max with nil
+	for _, col := range at.series {
+		for len(col.valuesRaw) < numRows {
+			col.Push(nil)
+		}
+	}
+
+	headers := []interface{}{}
+	for _, col := range at.series {
+		headers = append(headers, col.Name)
+	}
+
+	// generate the output rows
+	rows := [][]interface{}{}
+	// add headers first
+	rows = append(rows, headers)
+	// then data
+	for i := 0; i < numRows; i++ {
+		row := []interface{}{}
+		for _, col := range at.series {
+			v := col.valuesRaw[i]
+			if v == "---" {
+				v = "" // strip separators as they are only used for visual representation
+			}
+			row = append(row, v)
+		}
+		rows = append(rows, row)
+	}
+
+	return rows
+}
+
+func (at *Table) CSV(separator rune) string {
+	rows := []string{}
+
+	for _, cols := range at.RawData() {
+		row := []string{}
+		for _, col := range cols {
+			row = append(row, fmt.Sprint(col))
+		}
+		rows = append(rows, strings.Join(row, string(separator)))
+	}
+
+	return strings.Join(rows, "\n")
+}
+
+func (at *Table) YAML() (string, error) {
+	data, err := yaml.Marshal(at.RawData())
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
+func (at *Table) JSON() (string, error) {
+	data, err := json.Marshal(at.RawData())
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
+}
+
+func (at *Table) Print(logger *Logger) {
+	for _, line := range at.Rows() {
+		logger.Default("%s", line)
+	}
 }
 
 func (at *Table) Rows() []string {

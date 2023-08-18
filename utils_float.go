@@ -41,6 +41,6 @@ func GetFloat(val interface{}) (float64, error) {
 			s := sv.String()
 			return strconv.ParseFloat(s, 64)
 		}
-		return math.NaN(), fmt.Errorf("Can't convert %v to float64", v.Type())
+		return math.NaN(), fmt.Errorf("can't convert %v to float64", v.Type())
 	}
 }

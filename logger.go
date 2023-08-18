@@ -247,9 +247,7 @@ func (l *Logger) ShowColors() {
 }
 
 func (l *Logger) Table(ats ...*TableColumn) {
-	for _, line := range NewTable(ats...).Rows() {
-		l.Default("%s", line)
-	}
+	NewTable(ats...).Print(l)
 }
 
 func (l *Logger) KeyValueTable(data map[string]interface{}) {
@@ -257,7 +255,7 @@ func (l *Logger) KeyValueTable(data map[string]interface{}) {
 	atsValues := NewTableColumnLeft("Value")
 	keys := []string{}
 
-	for k, _ := range data {
+	for k := range data {
 		keys = append(keys, k)
 	}
 
@@ -268,9 +266,7 @@ func (l *Logger) KeyValueTable(data map[string]interface{}) {
 		atsValues.Push(data[k])
 	}
 
-	for _, line := range NewTable(atsKeys, atsValues).Rows() {
-		l.Default("%s", line)
-	}
+	NewTable(atsKeys, atsValues).Print(l)
 }
 
 // Progress prints a progress bar followed by the given format and arguments.
