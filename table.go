@@ -140,14 +140,22 @@ func (at *Table) RawData() [][]interface{} {
 	// then data
 	for i := 0; i < numRows; i++ {
 		row := []interface{}{}
+		onlySeparators := true
 		for _, col := range at.series {
 			v := col.valuesRaw[i]
 			if v == "---" {
 				v = "" // strip separators as they are only used for visual representation
+			} else {
+				onlySeparators = false
+			}
+			if str, ok := v.(string); ok {
+				v = StripANSI(str) // try to strip ANSI from strings
 			}
 			row = append(row, v)
 		}
-		rows = append(rows, row)
+		if !onlySeparators {
+			rows = append(rows, row)
+		}
 	}
 
 	return rows
