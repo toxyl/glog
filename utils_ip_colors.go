@@ -3,12 +3,27 @@ package glog
 import (
 	"fmt"
 	"strings"
+	"sync"
 )
 
-var ipColorCache map[string]int = map[string]int{}
+type ipColCache struct {
+	*sync.Mutex
+	data map[string]int
+}
 
-func getIPColor(ip string) int {
-	if v, ok := ipColorCache[ip]; ok {
+func newIPColorCache() *ipColCache {
+	ipcc := &ipColCache{
+		Mutex: &sync.Mutex{},
+		data:  map[string]int{},
+	}
+	return ipcc
+}
+
+func (ipcc *ipColCache) get(ip string) int {
+	ipcc.Lock()
+	defer ipcc.Unlock()
+
+	if v, ok := ipcc.data[ip]; ok {
 		return v
 	}
 
@@ -19,9 +34,11 @@ func getIPColor(ip string) int {
 		f, _ := GetFloat(p)
 		pt += f / pl
 	}
-	ipColorCache[ip] = int(32.0 + Max(0.0, Min(185.0, 185.0*(pt/255.0))))
-	return ipColorCache[ip]
+	ipcc.data[ip] = int(32.0 + Max(0.0, Min(185.0, 185.0*(pt/255.0))))
+	return ipcc.data[ip]
 }
+
+var ipColorCache *ipColCache = newIPColorCache()
 
 func enrichAndColorIPv4(ip string, useReverseDNS bool) string {
 	revDNS := "N/A"
@@ -31,7 +48,7 @@ func enrichAndColorIPv4(ip string, useReverseDNS bool) string {
 		}
 		revDNS = LoggerConfig.reverseDNSCache[ip]
 	}
-	ipColor := getIPColor(ip)
+	ipColor := ipColorCache.get(ip)
 
 	if revDNS != "N/A" {
 		ip = fmt.Sprintf("%s (%s)", ip, revDNS)

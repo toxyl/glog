@@ -69,7 +69,7 @@ func URL(raw ...string) string {
 		}
 		ips, _ := net.LookupIP(u.Host)
 		if len(ips) > 0 {
-			res += Wrap(u.Host, getIPColor(ips[0].To4().String()))
+			res += Wrap(u.Host, ipColorCache.get(ips[0].To4().String()))
 		} else {
 			isAlive = false
 			res += WrapRed(u.Host)
