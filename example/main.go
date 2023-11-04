@@ -75,8 +75,8 @@ func sleep() {
 }
 
 func printSection(title string) {
-	appLogger.Default("")
-	appLogger.Info("%s", glog.HighlightInfo(title))
+	appLogger.Blank("")
+	appLogger.Blank("%s", glog.HighlightInfo(title))
 }
 
 func demoMessageTypes() {
@@ -242,57 +242,41 @@ func demoNetwork() {
 	networkLogger.EnableColorLog("network-color.log")
 
 	networkLogger.Default(
-		"These are host:port combinations (with reverse DNS): %s, %s, %s",
+		`
+These are host:port combinations (with reverse DNS): %s, %s, %s
+These are host:port combinations (without reverse DNS): %s, %s, %s
+These are also host:port combinations: %s, %s, %s (with reverse DNS)
+These are also host:port combinations: %s, %s, %s (without reverse DNS)
+These are ports: %s, %s, %s, %s
+These are IPs (with reverse DNS): %s
+These are IPs (without reverse DNS): %s
+These are URLs: %s
+These are more URLs: %s
+Even more URLs: %s
+		`,
 		glog.AddrIPv4Port("8.8.8.8", 80, true),
 		glog.AddrIPv4Port("172.217.168.206", 443, true),
 		glog.AddrIPv4Port("160.20.152.105", 12343, true),
-	)
-	networkLogger.Default(
-		"These are host:port combinations (without reverse DNS): %s, %s, %s",
 		glog.AddrIPv4Port("8.8.8.8", 80, false),
 		glog.AddrIPv4Port("172.217.168.206", 443, false),
 		glog.AddrIPv4Port("160.20.152.105", 12343, false),
-	)
-	networkLogger.Default(
-		"These are also host:port combinations: %s, %s, %s (with reverse DNS)",
 		glog.Addr("8.8.8.8:80", true),
 		glog.Addr("172.217.168.206:443", true),
 		glog.Addr("160.20.152.105:12343", true),
-	)
-	networkLogger.Default(
-		"These are also host:port combinations: %s, %s, %s (without reverse DNS)",
 		glog.Addr("8.8.8.8:80", false),
 		glog.Addr("172.217.168.206:443", false),
 		glog.Addr("160.20.152.105:12343", false),
-	)
-	networkLogger.Default(
-		"These are ports: %s, %s, %s, %s",
 		glog.Port(80),
 		glog.Port(443),
 		glog.Port(8080),
 		glog.Port(41230),
-	)
-	networkLogger.Default(
-		"These are IPs (with reverse DNS): %s",
 		glog.IPs([]string{"127.0.0.1", "8.8.8.8", "160.20.152.105", "255.255.255.255"}, true),
-	)
-	networkLogger.Default(
-		"These are IPs (without reverse DNS): %s",
 		glog.IPs([]string{"127.0.0.1", "8.8.8.8", "160.20.152.105", "255.255.255.255"}, false),
-	)
-	networkLogger.Default(
-		"These are URLs: %s",
 		glog.URL("https://www.google.com", "https://serverius.net", "http://some.unsafe.place-to-not-go.to"),
-	)
-	networkLogger.Default(
-		"These are more URLs: %s",
 		glog.URL(
 			"https://sam-koblenski.blogspot.com/2015/09/everyday-dsp-for-programmers-averaging.html",
 			"https://random_user:random_password@random.domain/hello/world/?me=random_user&you=someone%%20else#here",
 		),
-	)
-	networkLogger.Default(
-		"Even more URLs: %s",
 		glog.URL(
 			"https://colab.research.google.com/github/huggingface/notebooks/blob/main/diffusers/stable_diffusion.ipynb#scrollTo=yEErJFjlrSWS",
 			"https://goteleport.com/docs/deploy-a-cluster/open-source/",
@@ -306,21 +290,19 @@ func demoMisc() {
 	printSection("MISC")
 
 	miscLogger.Default(
-		"These are passwords you should not use: %s, %s, %s, %s",
+		`
+These are passwords you should not use: %s, %s, %s, %s
+Here are a couple of reasons: %s, %s, %s, %s
+Sensitive files: %s, %s, %s, %s
+`,
 		glog.Password("password123"),
 		glog.Password("HelloWorld"),
 		glog.Password("admin"),
 		glog.Password("ILoveSex"),
-	)
-	miscLogger.Default(
-		"Here are a couple of reasons: %s, %s, %s, %s",
 		glog.Reason("the weather sucked"),
 		glog.Reason("my dog died"),
 		glog.Reason("my dog ate my homework"),
 		glog.Reason("it wasn't me"),
-	)
-	miscLogger.Default(
-		"Sensitive files: %s, %s, %s, %s",
 		glog.File("/etc/passwd"),
 		glog.File("~/.ssh/id_rsa"),
 		glog.File("/etc/profile"),
@@ -328,21 +310,40 @@ func demoMisc() {
 	)
 
 	printSection("STRING HIGHLIGHTING WITH AUTOMATIC COLORING")
-	stringLogger.Default("%s", glog.Highlight("This is a color highlighted text", "red", "green", "blue"))
-	stringLogger.Default("%s", glog.Highlight("This is another color highlighted text", "red", "green", "blue"))
-	stringLogger.Default("%s", glog.Highlight("Color is determined by each character,"))
-	stringLogger.Default("%s", glog.Highlight("i.e. identical strings produce identical colors."))
-	stringLogger.Default("%s", glog.Highlight("The algorithm is case-sensitive and only processes ASCII characters,"))
-	stringLogger.Default("%s", glog.Highlight("others are truncated to the ASCII range."))
-	stringLogger.Default("%s", glog.Highlight("Highlighted text is cached, so the color does not have"))
-	stringLogger.Default("%s", glog.Highlight("to be recalculated every time."))
-	stringLogger.Default("%s", glog.Highlight("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"))
-	stringLogger.Default("%s", glog.Highlight("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")"))
+	stringLogger.Default(`
+%s
+%s
+%s
+%s
+%s
+%s
+%s
+%s
+%s
+%s
+`,
+		glog.Highlight("This is a color highlighted text", "red", "green", "blue"),
+		glog.Highlight("This is another color highlighted text", "red", "green", "blue"),
+		glog.Highlight("Color is determined by each character,"),
+		glog.Highlight("i.e. identical strings produce identical colors."),
+		glog.Highlight("The algorithm is case-sensitive and only processes ASCII characters,"),
+		glog.Highlight("others are truncated to the ASCII range."),
+		glog.Highlight("Highlighted text is cached, so the color does not have"),
+		glog.Highlight("to be recalculated every time."),
+		glog.Highlight("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"),
+		glog.Highlight("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")"),
+	)
 
 	printSection("ANSI-AWARE VALUE PADDING")
-	stringLogger.Default("Left:   %s", glog.PadLeft(glog.Auto(1.52, "hello", 10000, -0.1), 50, '-'))
-	stringLogger.Default("Right:  %s", glog.PadRight(glog.Auto(1.52, "hello", 10000, -0.1), 50, '+'))
-	stringLogger.Default("Center: %s", glog.PadCenter(glog.Auto(1.52, "hello", 10000, -0.1), 50, '='))
+	stringLogger.Default(`
+"Left:   %s"
+"Right:  %s", 
+"Center: %s", 
+`,
+		glog.PadLeft(glog.Auto(1.52, "hello", 10000, -0.1), 50, '-'),
+		glog.PadRight(glog.Auto(1.52, "hello", 10000, -0.1), 50, '+'),
+		glog.PadCenter(glog.Auto(1.52, "hello", 10000, -0.1), 50, '='),
+	)
 
 	printSection("TRACING FUNCTION CALLS")
 	traceLogger.EnableTrace(3)
@@ -350,15 +351,25 @@ func demoMisc() {
 	traceLogger.DisableTrace()
 
 	printSection("PROGRESS BARS")
-	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
-	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
-	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
-	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
-	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
-	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
-	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
-	progressLogger.Info("%s complete", glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40))
-	appLogger.Default("")
+	progressLogger.Info(`
+%s complete
+%s complete 
+%s complete 
+%s complete 
+%s complete 
+%s complete 
+%s complete 
+%s complete 
+`,
+		glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40),
+		glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40),
+		glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40),
+		glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40),
+		glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40),
+		glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40),
+		glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40),
+		glog.ProgressBar(float64(glog.GetRandomInt(0, 10000))/10000.0, 40),
+	)
 }
 
 func demoDateTime() {
@@ -375,14 +386,12 @@ func demoDateTime() {
 	printSection("Duration:")
 	timeLogger.EnablePlainLog("time-plain.log")
 	timeLogger.Default(
-		"The operation took: %s, %s, %s, %s",
+		`The operations took: %s, %s, %s, %s
+                    %s, %s, %s, %s`,
 		glog.Duration(15),
 		glog.Duration(60),
 		glog.Duration(240.5),
 		glog.Duration(644),
-	)
-	timeLogger.Default(
-		"The operation took: %s, %s, %s, %s",
 		glog.DurationMilliseconds(15),
 		glog.DurationMilliseconds(60.5),
 		glog.DurationMilliseconds(240),
@@ -419,17 +428,28 @@ func demoDateTime() {
 		)
 	}
 
-	printSection("Time:")
-	timeLogger.Default("12hr: %s", glog.Time12hr(time.Now()))
-	timeLogger.Default("24hr: %s", glog.Time(time.Now()))
-	timeLogger.Default("Unix: %s", glog.Timestamp())
+	printSection("Time Related:")
+	timeLogger.Default(
+		`
+Time:
+	12hr: %s
+	24hr: %s
+	Unix: %s
 
-	printSection("Date:")
-	timeLogger.Default("Today: %s", glog.Date(time.Now()))
+Date:
+	Today: %s
 
-	printSection("Date & Time:")
-	timeLogger.Default("12hr: %s", glog.DateTime12hr(time.Now()))
-	timeLogger.Default("24hr: %s", glog.DateTime(time.Now()))
+Date & Time:
+	12hr: %s
+	24hr: %s
+`,
+		glog.Time12hr(time.Now()),
+		glog.Time(time.Now()),
+		glog.Timestamp(),
+		glog.Date(time.Now()),
+		glog.DateTime12hr(time.Now()),
+		glog.DateTime(time.Now()),
+	)
 
 	timeLogger.DisablePlainLog()
 }
@@ -541,29 +561,19 @@ func demoTables() {
 	tbl.Print(tableLogger)
 
 	printSection("TABLE CSV")
-	for _, line := range strings.Split(tbl.CSV(','), "\n") {
-		tableLogger.Default(line)
-	}
+	tableLogger.Blank(tbl.CSV(','))
 
 	printSection("TABLE TSV")
-	for _, line := range strings.Split(tbl.CSV('\t'), "\n") {
-		tableLogger.Default(line)
-	}
+	tableLogger.Blank(tbl.CSV('\t'))
 
 	printSection("TABLE YAML")
 	if data, err := tbl.YAML(); err == nil {
-		for _, line := range strings.Split(data, "\n") {
-			tableLogger.Default(line)
-		}
+		tableLogger.Blank(data)
 	}
 
 	printSection("TABLE JSON")
 	if data, err := tbl.JSON(); err == nil {
-		for _, line := range strings.Split(data, "\n") {
-			for _, block := range strings.Split(line, "],") {
-				tableLogger.Default(block + "],")
-			}
-		}
+		tableLogger.Blank(strings.ReplaceAll(data, "],[", "],\n["))
 	}
 }
 
@@ -594,7 +604,7 @@ func demoErrorHandling() {
 	testErrors.Check(errTestGo, "should not die (non-fatal)")
 	testErrors.Check(fmt.Errorf("test error"), "should not die (non-fatal)")
 	testErrors.Check(fmt.Errorf("some other: test error"), "should not die (non-fatal)")
-	testErrors.Check(fmt.Errorf("test error: more errors ..."), "should not die (non-fatal)")
+	testErrors.Check(fmt.Errorf("test error: more errors"), "should not die (non-fatal)")
 	testErrors.Check(fmt.Errorf("it can be somewhere: test error: in the chain"), "should not die (non-fatal)")
 	testErrors.Check(fmt.Errorf("this is not fatal"), "should not die (non-fatal)")
 	testErrors.Check(errTestGo, "should not die (non-fatal)")
@@ -623,6 +633,23 @@ func main() {
 	}
 
 	appLogger.Success("App booted, let's show you the demo then!")
+
+	glog.LoggerConfig.SplitOnNewLine = true
+	appLogger.Info("There is a new feature that you can enable if you like.")
+	appLogger.Blank(
+		`
+By default it is disabled to not break previous hacks
+that implement or exploit this behavior. 
+For this example it's now on.
+
+Set %s to %s 
+to enable splitting messages on new lines and 
+prefixing each line according to the %s.
+`,
+		glog.Auto("glog.LoggerConfig.SplitOnNewLine"),
+		glog.Auto(true),
+		glog.Auto("LoggerConfig"),
+	)
 
 	demoMessageTypes()
 	sleep()

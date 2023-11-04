@@ -56,7 +56,8 @@ type Config struct {
 	ShowRuntimeMilliseconds,
 	ShowDateTime,
 	ShowSubsystem,
-	ShowIndicator bool
+	ShowIndicator,
+	SplitOnNewLine bool
 	ProgressBarWidth int
 	Indicators       map[rune]*Indicator
 	reverseDNSCache  map[string]string
@@ -106,7 +107,7 @@ func NewDefaultConfig() *Config {
 		ColorFile:               LightBlue,
 		ColorError:              Red,
 		ColorUnitHumanReadable:  160,
-		ColorIndicator:          Gray,
+		ColorIndicator:          DarkGray,
 		ColorIndicatorInfo:      LightBlue,
 		ColorIndicatorOK:        OliveGreen,
 		ColorIndicatorSuccess:   Green,
@@ -123,6 +124,7 @@ func NewDefaultConfig() *Config {
 		ShowDateTime:            true,
 		ShowSubsystem:           true,
 		ShowIndicator:           true,
+		SplitOnNewLine:          false, // false by default to not break old behavior
 		ProgressBarWidth:        20,
 		Indicators:              map[rune]*Indicator{},
 		reverseDNSCache:         map[string]string{},
@@ -133,6 +135,7 @@ func NewDefaultConfig() *Config {
 	c.AddIndicator('+', "[+]", c.ColorIndicatorOK)
 	c.AddIndicator('i', "[i]", c.ColorIndicatorInfo)
 	c.AddIndicator(' ', "[ ]", c.ColorIndicator)
+	c.AddIndicator('_', "   ", c.ColorIndicator)
 	c.AddIndicator('!', "[!]", c.ColorIndicatorWarning)
 	c.AddIndicator('-', "[-]", c.ColorIndicatorNotOK)
 	c.AddIndicator('x', "[x]", c.ColorIndicatorError)

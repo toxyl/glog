@@ -128,7 +128,7 @@ func (st *StackTracer) getLines() []string {
 func (st *StackTracer) PrintWithLogger(l *Logger, indicator rune) {
 	lines := st.getLines()
 	for _, line := range lines {
-		l.write(indicator, l.prependFormat("%s"), line)
+		l.write(indicator, "%s", line)
 	}
 }
 

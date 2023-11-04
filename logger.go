@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -96,6 +97,7 @@ func (l *Logger) DisableColorLog() {
 //   - LoggerConfig.Indicators
 func (l *Logger) write(indicator rune, format string, a ...interface{}) {
 	prefix := ""
+
 	if LoggerConfig.ShowIndicator {
 		if vi, ok := LoggerConfig.Indicators[indicator]; ok {
 			prefix = Wrap(vi.value, vi.color)
@@ -111,8 +113,20 @@ func (l *Logger) write(indicator rune, format string, a ...interface{}) {
 	if LoggerConfig.ShowDateTime {
 		prefix = fmt.Sprintf("%s %s", DateTime(time.Now()), prefix)
 	}
+	if LoggerConfig.ShowSubsystem {
+		prefix = fmt.Sprintf("%s %s: ", prefix, Wrap(fmt.Sprintf("%-16s", l.ID), l.color))
+	}
 
-	msg := fmt.Sprintf(prefix+" "+format, a...)
+	msg := fmt.Sprintf(format, a...)
+	if LoggerConfig.SplitOnNewLine {
+		res := []string{}
+		for _, ln := range strings.Split(msg, "\n") {
+			res = append(res, prefix+" "+ln)
+		}
+		msg = strings.Join(res, "\n")
+	} else {
+		msg = prefix + " " + msg
+	}
 
 	if indicator == 'p' {
 		// the progress indicator is special, let's add some magic:
@@ -169,50 +183,48 @@ func (l *Logger) write(indicator rune, format string, a ...interface{}) {
 	fmt.Print(msg)
 }
 
-func (l *Logger) prependFormat(format string) string {
-	if !LoggerConfig.ShowSubsystem {
-		return format
-	}
-	return fmt.Sprintf("%s: %s", Wrap(fmt.Sprintf("%-16s", l.ID), l.color), format)
+// Blank prints a message without any indicator such as "[ ]", "[i]", etc.
+func (l *Logger) Blank(format string, a ...interface{}) {
+	l.write('_', format, a...)
 }
 
 func (l *Logger) Default(format string, a ...interface{}) {
-	l.write(' ', l.prependFormat(format), a...)
+	l.write(' ', format, a...)
 }
 
 func (l *Logger) Info(format string, a ...interface{}) {
-	l.write('i', l.prependFormat(format), a...)
+	l.write('i', format, a...)
 }
 
 func (l *Logger) Success(format string, a ...interface{}) {
-	l.write('✓', l.prependFormat(format), a...)
+	l.write('✓', format, a...)
 }
 
 func (l *Logger) OK(format string, a ...interface{}) {
-	l.write('+', l.prependFormat(format), a...)
+	l.write('+', format, a...)
 }
 
 func (l *Logger) NotOK(format string, a ...interface{}) {
-	l.write('-', l.prependFormat(format), a...)
+	l.write('-', format, a...)
 }
 
 func (l *Logger) Error(format string, a ...interface{}) {
-	l.write('x', l.prependFormat(format), a...)
+	l.write('x', format, a...)
 }
 
 func (l *Logger) Warning(format string, a ...interface{}) {
-	l.write('!', l.prependFormat(format), a...)
+	l.write('!', format, a...)
 }
 
 func (l *Logger) Debug(format string, a ...interface{}) {
 	if !l.debugMode {
 		return
 	}
-	l.write('d', l.prependFormat(format), a...)
+	l.write('d', format, a...)
 }
 
 func (l *Logger) Question(format string, a ...interface{}) {
-	l.write('?', l.prependFormat(format), a...)
+	l.write('?', format, a...)
 }
 
 func (l *Logger) Trace(level uint) {
@@ -287,7 +299,7 @@ func (l *Logger) KeyValueTable(data map[string]interface{}) {
 //   - Logger.ProgressError
 func (l *Logger) Progress(progress float64, format string, a ...interface{}) {
 	a = append([]interface{}{ProgressBar(progress, LoggerConfig.ProgressBarWidth)}, a...)
-	l.write('p', l.prependFormat("%s "+format), a...)
+	l.write('p', "%s "+format, a...)
 }
 
 // ProgressSuccess prints a success message with a progress bar followed by the given format and arguments.
