@@ -262,6 +262,10 @@ func (l *Logger) Table(ats ...*TableColumn) {
 	NewTable(ats...).Print(l)
 }
 
+func (l *Logger) TableWithoutHeader(ats ...*TableColumn) {
+	NewTable(ats...).PrintWithoutHeader(l)
+}
+
 func (l *Logger) KeyValueTable(data map[string]interface{}) {
 	atsKeys := NewTableColumnLeft("Key")
 	atsValues := NewTableColumnLeft("Value")

@@ -192,8 +192,17 @@ func (at *Table) JSON() (string, error) {
 }
 
 func (at *Table) Print(logger *Logger) {
-	for _, line := range at.Rows() {
-		logger.Default("%s", line)
+	rows := at.Rows()
+	for _, line := range rows {
+		logger.Blank("%s", line)
+	}
+}
+
+func (at *Table) PrintWithoutHeader(logger *Logger) {
+	rows := at.Rows()
+	rows = append(rows[0:1], rows[3:]...)
+	for _, line := range rows {
+		logger.Blank("%s", line)
 	}
 }
 

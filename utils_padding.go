@@ -4,20 +4,20 @@ import (
 	"strings"
 )
 
-func getPadLength(str string, maxLength int) int {
-	return Max(0, maxLength-plaintextStringLengthForPadding(str))
+func getPadLength(str string, maxLength int, padChar rune) int {
+	return Max(0, maxLength-plaintextStringLengthForPadding(str, padChar))
 }
 
 func PadLeft[I IntOrUint](str string, maxLength I, char rune) string {
-	return strings.Repeat(string(char), getPadLength(str, int(maxLength))) + str
+	return strings.Repeat(string(char), getPadLength(str, int(maxLength), char)) + str
 }
 
 func PadRight[I IntOrUint](str string, maxLength I, char rune) string {
-	return str + strings.Repeat(string(char), getPadLength(str, int(maxLength)))
+	return str + strings.Repeat(string(char), getPadLength(str, int(maxLength), char))
 }
 
 func PadCenter[I IntOrUint](str string, maxLength I, char rune) string {
-	padLen := getPadLength(str, int(maxLength))
+	padLen := getPadLength(str, int(maxLength), char)
 	pl, pr := 0, 0
 	if padLen%2 != 0 {
 		// uneven length, let's pad one more on the right

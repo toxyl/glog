@@ -46,7 +46,7 @@ func TestGetPadLength(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		got := getPadLength(tt.input, tt.maxLength)
+		got := getPadLength(tt.input, tt.maxLength, ' ')
 		if got != tt.expected {
 			t.Errorf("getPadLength(%q, %d) = %d, want %d", tt.input, tt.maxLength, got, tt.expected)
 		}

@@ -3,6 +3,7 @@ package glog
 import (
 	"bytes"
 	"regexp"
+	"strings"
 	"unicode"
 	"unicode/utf8"
 )
@@ -75,9 +76,10 @@ func PlaintextStringLength(str string) int {
 	return utf8.RuneCountInString(str)
 }
 
-func plaintextStringLengthForPadding(str string) int {
-	str = ReplaceRunes(str, " ", []rune{'μ', 'µ'}) // for padding calculations we actually need to count emojis as two chars
-	str = ReplaceEmojis(str, "  ")                 // for padding calculations we actually need to count emojis as two chars
+func plaintextStringLengthForPadding(str string, padChar rune) int {
+	str = strings.ReplaceAll(str, string(padChar), " ") // replace surrounding padding characters with single space
+	str = ReplaceRunes(str, " ", []rune{'μ', 'µ'})      // for padding calculations we actually need to count emojis as two chars
+	str = ReplaceEmojis(str, "  ")                      // for padding calculations we actually need to count emojis as two chars
 	str = RemoveNonPrintable(str)
 
 	return utf8.RuneCountInString(str)
