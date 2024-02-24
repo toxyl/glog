@@ -24,6 +24,16 @@ type TableColumn struct {
 	fnHighlight func(a ...interface{}) string
 }
 
+func (t *TableColumn) Reset() {
+	t.valuesRaw = []interface{}{}
+	t.values = []string{}
+	t.maxLen = len(t.Name)
+}
+
+func (t *TableColumn) Values() []interface{} {
+	return t.valuesRaw
+}
+
 func (t *TableColumn) Push(value ...interface{}) *TableColumn {
 	for _, v := range value {
 		vs := t.fnHighlight(v)
