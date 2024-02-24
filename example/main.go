@@ -241,12 +241,13 @@ func demoNetwork() {
 	networkLogger.EnablePlainLog("network-plain.log")
 	networkLogger.EnableColorLog("network-color.log")
 
+	glog.LoggerConfig.CheckIfURLIsAlive = false
 	networkLogger.Default(
 		`
-These are host:port combinations (with reverse DNS): %s, %s, %s
-These are host:port combinations (without reverse DNS): %s, %s, %s
-These are also host:port combinations: %s, %s, %s (with reverse DNS)
-These are also host:port combinations: %s, %s, %s (without reverse DNS)
+These are host:port combinations (with reverse DNS): %s, %s
+These are host:port combinations (without reverse DNS): %s, %s
+These are also host:port combinations: %s, %s (with reverse DNS)
+These are also host:port combinations: %s, %s (without reverse DNS)
 These are ports: %s, %s, %s, %s
 These are IPs (with reverse DNS): %s
 These are IPs (without reverse DNS): %s
@@ -256,23 +257,19 @@ Even more URLs: %s
 		`,
 		glog.AddrIPv4Port("8.8.8.8", 80, true),
 		glog.AddrIPv4Port("172.217.168.206", 443, true),
-		glog.AddrIPv4Port("160.20.152.105", 12343, true),
 		glog.AddrIPv4Port("8.8.8.8", 80, false),
 		glog.AddrIPv4Port("172.217.168.206", 443, false),
-		glog.AddrIPv4Port("160.20.152.105", 12343, false),
 		glog.Addr("8.8.8.8:80", true),
 		glog.Addr("172.217.168.206:443", true),
-		glog.Addr("160.20.152.105:12343", true),
 		glog.Addr("8.8.8.8:80", false),
 		glog.Addr("172.217.168.206:443", false),
-		glog.Addr("160.20.152.105:12343", false),
 		glog.Port(80),
 		glog.Port(443),
 		glog.Port(8080),
 		glog.Port(41230),
-		glog.IPs([]string{"127.0.0.1", "8.8.8.8", "160.20.152.105", "255.255.255.255"}, true),
-		glog.IPs([]string{"127.0.0.1", "8.8.8.8", "160.20.152.105", "255.255.255.255"}, false),
-		glog.URL("https://www.google.com", "https://serverius.net", "http://some.unsafe.place-to-not-go.to"),
+		glog.IPs([]string{"127.0.0.1", "8.8.8.8", "255.255.255.255"}, true),
+		glog.IPs([]string{"127.0.0.1", "8.8.8.8", "255.255.255.255"}, false),
+		glog.URL("https://www.google.com", "http://some.unsafe.place-to-not-go.to"),
 		glog.URL(
 			"https://sam-koblenski.blogspot.com/2015/09/everyday-dsp-for-programmers-averaging.html",
 			"https://random_user:random_password@random.domain/hello/world/?me=random_user&you=someone%%20else#here",
@@ -280,6 +277,7 @@ Even more URLs: %s
 		glog.URL(
 			"https://colab.research.google.com/github/huggingface/notebooks/blob/main/diffusers/stable_diffusion.ipynb#scrollTo=yEErJFjlrSWS",
 			"https://goteleport.com/docs/deploy-a-cluster/open-source/",
+			"https://this.domain.should.be.dead",
 		),
 	)
 	networkLogger.DisablePlainLog()

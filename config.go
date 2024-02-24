@@ -57,7 +57,8 @@ type Config struct {
 	ShowDateTime,
 	ShowSubsystem,
 	ShowIndicator,
-	SplitOnNewLine bool
+	SplitOnNewLine,
+	CheckIfURLIsAlive bool
 	ProgressBarWidth int
 	Indicators       map[rune]*Indicator
 	reverseDNSCache  map[string]string
@@ -125,6 +126,7 @@ func NewDefaultConfig() *Config {
 		ShowSubsystem:           true,
 		ShowIndicator:           true,
 		SplitOnNewLine:          false, // false by default to not break old behavior
+		CheckIfURLIsAlive:       true,  // true by default to not break old behavior
 		ProgressBarWidth:        20,
 		Indicators:              map[rune]*Indicator{},
 		reverseDNSCache:         map[string]string{},

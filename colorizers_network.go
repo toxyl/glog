@@ -37,7 +37,7 @@ func IPs(ips []string, useReverseDNS bool) string {
 	return strings.Join(hs, ", ")
 }
 
-// URL colorizes a URL and marks dead ones (based on a DNS check).
+// URL colorizes a URL and, if enabled, marks dead ones (based on a DNS check).
 //
 // Related config setting(s):
 //
@@ -49,6 +49,7 @@ func IPs(ips []string, useReverseDNS bool) string {
 //   - `LoggerConfig.ColorQueryKey`
 //   - `LoggerConfig.ColorQueryValue`
 //   - `LoggerConfig.ColorFragment`
+//   - `LoggerConfig.CheckIfURLIsAlive`
 func URL(raw ...string) string {
 	out := []string{}
 	for _, r := range raw {
@@ -67,12 +68,16 @@ func URL(raw ...string) string {
 			}
 			res += Wrap("@", LoggerConfig.ColorURLSeparators)
 		}
-		ips, _ := net.LookupIP(u.Host)
-		if len(ips) > 0 {
-			res += Wrap(u.Host, ipColorCache.get(ips[0].To4().String()))
+		if LoggerConfig.CheckIfURLIsAlive {
+			ips, _ := net.LookupIP(u.Host)
+			if len(ips) > 0 {
+				res += Wrap(u.Host, ipColorCache.get(ips[0].To4().String()))
+			} else {
+				isAlive = false
+				res += WrapRed(u.Host)
+			}
 		} else {
-			isAlive = false
-			res += WrapRed(u.Host)
+			res += Wrap(u.Host, stringColorCache.Get(u.Host))
 		}
 		for i, pe := range strings.Split(u.Path, "/") {
 			if pe == "" {
