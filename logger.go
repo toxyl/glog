@@ -183,37 +183,87 @@ func (l *Logger) write(indicator rune, format string, a ...interface{}) {
 	fmt.Print(msg)
 }
 
+// auto prints a message using the given indicator, but will first run all arguments
+// through glog.Auto()
+func (l *Logger) auto(indicator rune, format string, a ...interface{}) {
+	str := []interface{}{}
+	for _, s := range a {
+		str = append(str, Auto(s))
+	}
+	l.write(indicator, format, str...)
+}
+
 // Blank prints a message without any indicator such as "[ ]", "[i]", etc.
 func (l *Logger) Blank(format string, a ...interface{}) {
 	l.write('_', format, a...)
+}
+
+// BlankAuto does the same as Blank but will process all arguments with glog.Auto(...) first.
+func (l *Logger) BlankAuto(format string, a ...interface{}) {
+	l.auto('_', format, a...)
 }
 
 func (l *Logger) Default(format string, a ...interface{}) {
 	l.write(' ', format, a...)
 }
 
+// DefaultAuto does the same as Default but will process all arguments with glog.Auto(...) first.
+func (l *Logger) DefaultAuto(format string, a ...interface{}) {
+	l.auto(' ', format, a...)
+}
+
 func (l *Logger) Info(format string, a ...interface{}) {
 	l.write('i', format, a...)
+}
+
+// InfoAuto does the same as Info but will process all arguments with glog.Auto(...) first.
+func (l *Logger) InfoAuto(format string, a ...interface{}) {
+	l.auto('i', format, a...)
 }
 
 func (l *Logger) Success(format string, a ...interface{}) {
 	l.write('✓', format, a...)
 }
 
+// SuccessAuto does the same as Success but will process all arguments with glog.Auto(...) first.
+func (l *Logger) SuccessAuto(format string, a ...interface{}) {
+	l.auto('✓', format, a...)
+}
+
 func (l *Logger) OK(format string, a ...interface{}) {
 	l.write('+', format, a...)
+}
+
+// OKAuto does the same as OK but will process all arguments with glog.Auto(...) first.
+func (l *Logger) OKAuto(format string, a ...interface{}) {
+	l.auto('+', format, a...)
 }
 
 func (l *Logger) NotOK(format string, a ...interface{}) {
 	l.write('-', format, a...)
 }
 
+// NotOKAuto does the same as NotOK but will process all arguments with glog.Auto(...) first.
+func (l *Logger) NotOKAuto(format string, a ...interface{}) {
+	l.auto('-', format, a...)
+}
+
 func (l *Logger) Error(format string, a ...interface{}) {
 	l.write('x', format, a...)
 }
 
+// ErrorAuto does the same as Error but will process all arguments with glog.Auto(...) first.
+func (l *Logger) ErrorAuto(format string, a ...interface{}) {
+	l.auto('x', format, a...)
+}
+
 func (l *Logger) Warning(format string, a ...interface{}) {
 	l.write('!', format, a...)
+}
+
+// WarningAuto does the same as Warning but will process all arguments with glog.Auto(...) first.
+func (l *Logger) WarningAuto(format string, a ...interface{}) {
+	l.auto('!', format, a...)
 }
 
 func (l *Logger) Debug(format string, a ...interface{}) {
@@ -223,8 +273,21 @@ func (l *Logger) Debug(format string, a ...interface{}) {
 	l.write('d', format, a...)
 }
 
+// DebugAuto does the same as Debug but will process all arguments with glog.Auto(...) first.
+func (l *Logger) DebugAuto(format string, a ...interface{}) {
+	if !l.debugMode {
+		return
+	}
+	l.auto('d', format, a...)
+}
+
 func (l *Logger) Question(format string, a ...interface{}) {
 	l.write('?', format, a...)
+}
+
+// QuestionAuto does the same as Question but will process all arguments with glog.Auto(...) first.
+func (l *Logger) QuestionAuto(format string, a ...interface{}) {
+	l.auto('?', format, a...)
 }
 
 func (l *Logger) Trace(level uint) {

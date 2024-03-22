@@ -636,7 +636,7 @@ func main() {
 
 	glog.LoggerConfig.SplitOnNewLine = true
 	appLogger.Info("There is a new feature that you can enable if you like.")
-	appLogger.Blank(
+	appLogger.BlankAuto(
 		`
 By default it is disabled to not break previous hacks
 that implement or exploit this behavior. 
@@ -646,10 +646,10 @@ Set %s to %s
 to enable splitting messages on new lines and 
 prefixing each line according to the %s.
 `,
-		glog.Auto("glog.LoggerConfig.SplitOnNewLine"),
-		glog.Auto(true),
-		glog.Auto("LoggerConfig"),
-	)
+		"glog.LoggerConfig.SplitOnNewLine",
+		true,
+		"LoggerConfig",
+	) // ignore warning, *Auto functions convert everything to strings....
 
 	demoMessageTypes()
 	sleep()
