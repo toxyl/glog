@@ -7,13 +7,6 @@ import (
 
 var stackTracer = NewStackTracer()
 
-type GErrorTrace struct {
-	depth  int
-	line   int
-	file   string
-	method string
-}
-
 type GError struct {
 	error
 	isFatalError bool

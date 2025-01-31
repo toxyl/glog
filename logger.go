@@ -104,6 +104,9 @@ func (l *Logger) write(indicator rune, format string, a ...interface{}) {
 		}
 	}
 
+	if LoggerConfig.ShowRuntimeHumanReadable {
+		prefix = fmt.Sprintf("%22s %s", RuntimeHumanReadable(), prefix)
+	}
 	if LoggerConfig.ShowRuntimeSeconds {
 		prefix = fmt.Sprintf("%22s s %s", Runtime(), prefix)
 	}

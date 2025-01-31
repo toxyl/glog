@@ -14,7 +14,7 @@ var reDurationSeparators regexp.Regexp = *regexp.MustCompile(`([a-zA-Z]+)([0-9]+
 //
 // Related config setting(s):
 //
-//  - `LoggerConfig.ColorDuration`
+//   - `LoggerConfig.ColorDuration`
 func Duration[D Durations](seconds D) string {
 	str := time.Duration(seconds * D(time.Second)).String()
 	str = reDurationSeparators.ReplaceAllString(str, "$1 $2")
@@ -27,7 +27,7 @@ func Duration[D Durations](seconds D) string {
 //
 // Related config setting(s):
 //
-//  - `LoggerConfig.ColorDuration`
+//   - `LoggerConfig.ColorDuration`
 func DurationMilliseconds[D Durations](milliseconds D) string {
 	str := time.Duration(milliseconds * D(time.Millisecond)).String()
 	str = reDurationSeparators.ReplaceAllString(str, "$1 $2")
@@ -43,13 +43,13 @@ func DurationMilliseconds[D Durations](milliseconds D) string {
 //
 // Use `scale` to define how to treat intervals of months (always 1/12 of a year) and years:
 //
-//  - `YEAR_COMMON` = 365 days
-//  - `YEAR_LEAP` = 366 days
-//  - `YEAR_AVERAGE` = (3 * `YEAR_COMMON` + 1 * `YEAR_LEAP`) / 4
+//   - `YEAR_COMMON` = 365 days
+//   - `YEAR_LEAP` = 366 days
+//   - `YEAR_AVERAGE` = (3 * `YEAR_COMMON` + 1 * `YEAR_LEAP`) / 4
 //
 // Related config setting(s):
 //
-//  - `LoggerConfig.AutoFloatPrecision`
+//   - `LoggerConfig.AutoFloatPrecision`
 func DurationShort[N Number](seconds N, scale DurationScale) string {
 	v, e, u := humanReadableDuration(seconds, scale)
 	return wrapHumanReadable(v, "", u, e)
@@ -64,7 +64,7 @@ func TimeCustom(t time.Time, format string) string {
 //
 // Related config setting(s):
 //
-//  - `LoggerConfig.DefaultTimeFormat12hr`
+//   - `LoggerConfig.DefaultTimeFormat12hr`
 func Time12hr(t time.Time) string {
 	return TimeCustom(t, LoggerConfig.TimeFormat12hr)
 }
@@ -73,7 +73,7 @@ func Time12hr(t time.Time) string {
 //
 // Related config setting(s):
 //
-//  - `LoggerConfig.DefaultTimeFormat`
+//   - `LoggerConfig.DefaultTimeFormat`
 func Time(t time.Time) string {
 	return TimeCustom(t, LoggerConfig.TimeFormat)
 }
@@ -82,7 +82,7 @@ func Time(t time.Time) string {
 //
 // Related config setting(s):
 //
-//  - `LoggerConfig.DefaultDateFormat`
+//   - `LoggerConfig.DefaultDateFormat`
 func Date(t time.Time) string {
 	return TimeCustom(t, LoggerConfig.DateFormat)
 }
@@ -91,7 +91,7 @@ func Date(t time.Time) string {
 //
 // Related config setting(s):
 //
-//  - `LoggerConfig.DefaultDateTimeFormat`
+//   - `LoggerConfig.DefaultDateTimeFormat`
 func DateTime(t time.Time) string {
 	return TimeCustom(t, LoggerConfig.DateTimeFormat)
 }
@@ -100,7 +100,7 @@ func DateTime(t time.Time) string {
 //
 // Related config setting(s):
 //
-//  - `LoggerConfig.DefaultDateTimeFormat12hr`
+//   - `LoggerConfig.DefaultDateTimeFormat12hr`
 func DateTime12hr(t time.Time) string {
 	return TimeCustom(t, LoggerConfig.DateTimeFormat12hr)
 }
@@ -109,7 +109,7 @@ func DateTime12hr(t time.Time) string {
 //
 // Related config setting(s):
 //
-//  - `LoggerConfig.ColorTime`
+//   - `LoggerConfig.ColorTime`
 func Timestamp() string {
 	return Wrap(fmt.Sprint(time.Now().Unix()), LoggerConfig.ColorTime)
 }
@@ -118,16 +118,25 @@ func Timestamp() string {
 //
 // Related config setting(s):
 //
-//  - `LoggerConfig.ColorDuration`
+//   - `LoggerConfig.ColorDuration`
 func Runtime() string {
 	return Wrap(fmt.Sprint(int(time.Since(LoggerConfig.createdAt).Seconds())), LoggerConfig.ColorDuration)
+}
+
+// RuntimeHumanReadable determines the number of seconds passed since program start.
+//
+// Related config setting(s):
+//
+//   - `LoggerConfig.ColorDuration`
+func RuntimeHumanReadable() string {
+	return Duration(int(time.Since(LoggerConfig.createdAt).Seconds()))
 }
 
 // RuntimeMilliseconds determines the number of milliseconds passed since program start.
 //
 // Related config setting(s):
 //
-//  - `LoggerConfig.ColorDuration`
+//   - `LoggerConfig.ColorDuration`
 func RuntimeMilliseconds() string {
 	return Wrap(fmt.Sprint(int(time.Since(LoggerConfig.createdAt).Milliseconds())), LoggerConfig.ColorDuration)
 }
