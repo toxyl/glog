@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/toxyl/glog"
+	"github.com/toxyl/glog/ansi"
 )
 
 var appLogger *glog.Logger = glog.NewLogger("", glog.Pink, false, nil)
@@ -31,6 +32,10 @@ var miscLogger *glog.Logger = glog.NewLogger("Misc", -1, false, func(msg string)
 	fmt.Print("With    colors: " + msg)                 // we just echo what we get
 	fmt.Print("Without colors: " + glog.StripANSI(msg)) // and again, but without colors
 })
+
+var ansiLogger *glog.Logger = glog.NewLogger("ANSI", glog.Yellow, false, nil)
+var cursorLogger *glog.Logger = glog.NewLogger("Cursor", glog.Cyan, false, nil)
+var screenLogger *glog.Logger = glog.NewLogger("Screen", glog.Red, false, nil)
 
 func fnE() {
 	traceLogger.Trace(1)
@@ -461,7 +466,7 @@ func demoTables() {
 	printSection("TABLES")
 
 	tableLogger.KeyValueTable(
-		map[string]interface{}{
+		map[string]any{
 			"key 1": 123,
 			"key 2": 0.123,
 			"key 3": -1,
@@ -475,7 +480,7 @@ func demoTables() {
 		10,
 		" ",
 		"---",
-		[]interface{}{"hello world", nil, 2, []string{"nesting", "works", "too"}, 0.30},
+		[]any{"hello world", nil, 2, []string{"nesting", "works", "too"}, 0.30},
 		" ",
 		"---",
 		" ",
@@ -519,7 +524,7 @@ func demoTables() {
 	)
 	col4 := glog.NewTableColumnCenterCustom("Pad Char", '∙', nil).Push(
 		-10,
-		[]interface{}{0, 5, 1.4, "test"},
+		[]any{0, 5, 1.4, "test"},
 		"---",
 		" ",
 		30.0/2.9,
@@ -539,7 +544,7 @@ func demoTables() {
 		-10,
 		" ",
 		"---",
-		glog.Auto([]interface{}{0, 5, 1.4, "test"}),
+		glog.Auto([]any{0, 5, 1.4, "test"}),
 		30.0/2.9,
 		"---",
 		"     ",
@@ -623,6 +628,217 @@ func demoFatalErrorHandling() {
 	fn()
 }
 
+func demoANSIUtilities() {
+	printSection("ANSI TEXT FORMATTING")
+
+	ansiLogger.Default("Basic formatting: %s%s%s%s%s%s%s%s%s",
+		ansi.Bold().Apply("Bold")+" ",
+		ansi.Dim().Apply("Dim")+" ",
+		ansi.Italic().Apply("Italic")+" ",
+		ansi.Underline().Apply("Underline")+" ",
+		ansi.DoubleUnderline().Apply("DoubleUnderline")+" ",
+		ansi.StrikeThrough().Apply("StrikeThrough")+" ",
+		ansi.Reverse().Apply("Reverse")+" ",
+		ansi.Conceal().Apply("Conceal")+" ",
+		ansi.Reset().String(),
+	)
+
+	printSection("BACKGROUND COLORS")
+	ansiLogger.Default("Background colors: %s %s %s %s %s",
+		ansi.WrapBackground("Red Background", glog.Red),
+		ansi.WrapBackground("Green Background", glog.Green),
+		ansi.WrapBackground("Blue Background", glog.Blue),
+		ansi.WrapBackground("Yellow Background", glog.Yellow),
+		ansi.WrapBackground("Cyan Background", glog.Cyan),
+	)
+}
+
+func demoCursorMovement() {
+	printSection("CURSOR MOVEMENT")
+
+	cursorLogger.Default("Let's play Tic-Tac-Toe")
+
+	// Demonstrate cursor movement
+	cA, cB, cC := glog.NewTableColumnCenter("a"), glog.NewTableColumnCenter("b"), glog.NewTableColumnCenter("c")
+	cA.Push("-", "-", "-")
+	cB.Push("-", "-", "-")
+	cC.Push("-", "-", "-")
+	cursorLogger.TableWithoutHeader(cA, cB, cC)
+	cursorLogger.Default("Line 1: Original text")
+
+	// Move cursor up and play tic-tac-toe
+	ansi.CursorUp(5).ToStdout()
+	ansi.CursorForward(56).ToStdout()
+	ansi.New("x").ToStdout()
+
+	time.Sleep(500 * time.Millisecond)
+
+	ansi.CursorForward(7).ToStdout()
+	ansi.New("o").ToStdout()
+
+	time.Sleep(500 * time.Millisecond)
+
+	ansi.CursorDown(1).ToStdout()
+	ansi.CursorBackward(5).ToStdout()
+	ansi.New("x").ToStdout()
+
+	time.Sleep(500 * time.Millisecond)
+
+	ansi.CursorForward(3).ToStdout()
+	ansi.New("o").ToStdout()
+
+	time.Sleep(500 * time.Millisecond)
+
+	ansi.CursorDown(1).ToStdout()
+	ansi.CursorBackward(1).ToStdout()
+	ansi.New("x").ToStdout()
+
+	time.Sleep(500 * time.Millisecond)
+
+	// Move cursor back to end
+	ansi.CursorDown(2).ToStdout()
+	ansi.CursorBackward(11).ToStdout()
+	for _, c := range "Sorry `o`, `x` has won!" {
+		ansi.New(string(c)).ToStdout()
+		time.Sleep(500 * time.Millisecond)
+	}
+	ansi.ClearToEOL().ToStdout()
+	ansi.Ln().ToStdout()     // Progress to next line
+	cursorLogger.Default("") // Add a blank line after our demo
+
+	printSection("CURSOR POSITIONING")
+	cursorLogger.Default("") // Add a blank line after our demo
+	ansi.CursorUp(1).ToStdout()
+	ansi.CursorForward(56).ToStdout()
+	ansi.StoreCursor().ToStdout()
+	ansi.New("Hello there! This line will be overwritten.").ToStdout()
+	time.Sleep(2 * time.Second)
+	ansi.RestoreCursor().ToStdout()
+	for _, c := range "Overwritten!" {
+		ansi.New(string(c)).ToStdout()
+		time.Sleep(500 * time.Millisecond)
+	}
+	ansi.ClearToEOL().ToStdout()
+	ansi.Ln().ToStdout() // Progress to next line
+	time.Sleep(2 * time.Second)
+
+	// Move to end
+	ansi.CursorDown(3).ToStdout()
+	cursorLogger.Default("") // Add space after demo
+}
+
+func demoScreenControl() {
+	printSection("SCREEN CONTROL")
+
+	screenLogger.Default("Demonstrating screen clearing capabilities:")
+	screenLogger.Default("This text will be cleared in 2 seconds...")
+
+	// Wait a bit to show the text
+	time.Sleep(2 * time.Second)
+
+	// Clear from cursor to end of screen
+	ansi.ClearScreenFromCursor().ToStdout()
+	screenLogger.Default("Screen cleared from cursor to end!")
+
+	time.Sleep(1 * time.Second)
+
+	// Clear entire screen
+	ansi.ClearScreen().ToStdout()
+	screenLogger.Default("Entire screen cleared!")
+	screenLogger.Default("Cursor positioned at top-left")
+
+	printSection("LINE CLEARING")
+	screenLogger.Default("Line 1: This will be partially cleared")
+	screenLogger.Default("Line 2: This will be partially cleared")
+	screenLogger.Default("Line 3: This will be partially cleared")
+
+	// Move cursor up and clear lines
+	ansi.CursorUp(3).ToStdout()
+	ansi.CursorForward(15).ToStdout()
+	ansi.ClearToEOL().ToStdout()
+	ansi.New("CLEARED!").ToStdout()
+
+	ansi.CursorDown(1).ToStdout()
+	ansi.CursorForward(15).ToStdout()
+	ansi.ClearToEOL().ToStdout()
+	ansi.New("CLEARED!").ToStdout()
+
+	ansi.CursorDown(1).ToStdout()
+	ansi.CursorForward(15).ToStdout()
+	ansi.ClearToEOL().ToStdout()
+	ansi.New("CLEARED!").ToStdout()
+
+	ansi.CursorDown(1).ToStdout()
+	screenLogger.Default("") // Add space after demo
+}
+
+func demoInteractiveProgress() {
+	printSection("INTERACTIVE PROGRESS DEMO")
+
+	progressLogger.Default("Starting interactive progress demo...")
+
+	// Hide cursor for cleaner output
+	ansi.HideCursor().ToStdout()
+	defer ansi.ShowCursor().ToStdout()
+
+	for i := 0; i <= 100; i += 5 {
+		// Move cursor up and clear line
+		ansi.CursorUp(1).ToStdout()
+		ansi.CursorToLineStartAndClear().ToStdout()
+		time.Sleep(100 * time.Millisecond)
+	}
+
+	ansi.CursorDown(1).ToStdout()
+	progressLogger.Default("Progress demo completed!")
+}
+
+func demoTextEffects() {
+	printSection("TEXT EFFECTS DEMO")
+
+	ansiLogger.Default("Demonstrating various text effects:")
+
+	// Concealed text (password-like)
+	ansiLogger.Default("Concealed text: %s%s",
+		ansi.Conceal().Apply("secret123"),
+		" - Useful for password prompts")
+}
+
+func demoLineWrapping() {
+	printSection("LINE WRAPPING CONTROL")
+
+	screenLogger.Default("Demonstrating line wrapping control:")
+
+	// Disable line wrapping
+	ansi.DisableLineWrap().ToStdout()
+	screenLogger.Default("This is a very long line that should not wrap even if it exceeds the terminal width. It will continue on the same line until it reaches the edge of the terminal window.")
+
+	// Re-enable line wrapping
+	ansi.EnableLineWrap().ToStdout()
+	screenLogger.Default("This line should wrap normally if it's too long for the terminal width.")
+
+	screenLogger.Default("Line wrapping restored to normal behavior.")
+}
+
+func demoQuestionInline() {
+	printSection("(ASKING) QUESTIONS")
+	log := glog.NewLoggerSimple("Questions")
+
+	log.Question("This is a question without user input,\nit could be used to mark items that need review.")
+	log.BlankAuto(
+		"Hi %s, you are %s and you can be reached at %s.",
+		log.Ask("What is your name?", "string", "John Doe"),
+		log.Ask("Enter your age: ", "int", "30"),
+		log.Ask("Enter your email: ", "email", "john@example.com"),
+	)
+	correct := log.AskBoolWithTimeout("Is that correct?", true, 5*time.Second)
+	if correct {
+		log.Success("You said the info is correct.")
+	} else {
+		log.NotOK("Do I have to lookup your data for you?\nJust kidding!")
+	}
+	log.Blank("")
+}
+
 var (
 	ignoreSleeps = false
 )
@@ -651,6 +867,9 @@ prefixing each line according to the %s.
 		"LoggerConfig",
 	) // ignore warning, *Auto functions convert everything to strings....
 
+	demoQuestionInline()
+	sleep()
+
 	demoMessageTypes()
 	sleep()
 
@@ -667,6 +886,25 @@ prefixing each line according to the %s.
 	sleep()
 
 	demoColors()
+	sleep()
+
+	// New ANSI utility demonstrations
+	demoANSIUtilities()
+	sleep()
+
+	demoCursorMovement()
+	sleep()
+
+	demoScreenControl()
+	sleep()
+
+	demoInteractiveProgress()
+	sleep()
+
+	demoTextEffects()
+	sleep()
+
+	demoLineWrapping()
 	sleep()
 
 	demoTables()
