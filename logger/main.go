@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -518,8 +519,11 @@ func (l *Logger) Ask(question, optionsOrType, defaultAnswer string) string {
 	l.QuestionInline("%s [%s] <default=%s>: ", question, optionsOrType, defaultAnswer)
 
 	var userInput string
-	fmt.Scanln(&userInput)
-	if userInput == "" {
+	scanner := bufio.NewScanner(os.Stdin)
+	if scanner.Scan() {
+		userInput = scanner.Text()
+	}
+	if len(userInput) == 0 {
 		return defaultAnswer
 	}
 	return userInput
